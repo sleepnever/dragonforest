@@ -1,0 +1,14 @@
+{
+    "stick": {
+        "name": "Battle Stick",
+        "damage": 5,
+        "maxDamage": 10,
+        "cost": 0
+    },
+    "woodbat": {
+        "name": "Wood Bat",
+        "damage": 15,
+        "maxDamage": 20,
+        "cost": 10
+    }
+}
