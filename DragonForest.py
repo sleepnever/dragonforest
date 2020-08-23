@@ -3,24 +3,25 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 8/18/2020
+# Updated 8/23/2020
 #
 # TODO
 # -Search code for TODO comments
 # -What am I doing with npc.py?
 # -Move more long story pieces into textblocks.py (?) or just remove it
 # -When player levels up, how to get Armor and new weapons?
-# -Weapon class
+# -Weapon class or some other structure
 #   -Weapon Name, Damage, Cost
 # -Enemies
+#   -Add max experience an enemy will give you so randInt(1,max)
 #   -Update Enemy class attributes (name -> Name, etc), add methods, etc
-#   -end of game Dragon boss
-#   -more variety at different levels
-#   -previous level enemies should be included in random.choice() selection
+#   -Previous level enemies should be included in random.choice() selection for more variety, smash listes together
 # -Story
 #   -Need whatever the mystery of the forest is
 # -Load game
 #   -If save file exists with username, ask to load?
+# -Artwork
+#   -Some art with \ are spaced incorrectly on the line, like showForest()
 #----------------------------
 
 # Python Libraries
@@ -80,6 +81,8 @@ def loadGame():
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
 
 def saveGame():
+
+    print('< Saving Game >')
     config = configparser.ConfigParser()
 
     config['PLAYER'] = {
@@ -108,14 +111,14 @@ def luckDragon():
         prizeWon = random.choice(prize)
 
         if prizeWon == 'money':
-            print('It has given you 5 somewhat shiny coins.')
-            p1.Money += 5
+            print('It has given you 10 somewhat shiny coins.')
+            p1.Money += 10
         elif prizeWon == 'health':
-            print('You''ve gained 5 HP.')
-            p1.UpdateHealth(5)
+            print('You''ve gained 15 HP.')
+            p1.UpdateHealth(15)
         elif prizeWon == 'armor':
-            print('You''ve gained 2 AP.')
-            p1.UpdateArmor(2)
+            print('You''ve gained 10 AP.')
+            p1.UpdateArmor(10)
         
         print()
 
@@ -224,7 +227,7 @@ def camp():
     print('You decide this is a good place to camp for a while.')
     
     print('Z',end='')
-    for i in range(10):
+    for _ in range(10): # changed i -> _ which is a python throwaway var
         print('z',end='')
         time.sleep(0.5)
         
@@ -252,8 +255,8 @@ def town():
         time.sleep(1)
         print('As you walk towards the town, you spot an Inn and... a Blacksmith shop!')
         time.sleep(1)
-        print('You toss your battle worn Stick into the bushes and mutter that you will get something better.')
-        # TODO: player now has nothing. How do we fight with nothing (get ass beat) and/or get a new weapon?
+        print('You look at your battle worn Stick, wanting to toss it into the bushes where it belongs, but alas you keep it.')
+        time.sleep(1)
         print('People are bustling around doing chores, bartering for goods, yelling at each other.')
         time.sleep(1)
         print('Children are playing games. One big kid is beating on another... ah, kids, what can you do?')
@@ -264,7 +267,6 @@ def town():
         print('The rest of town is a blackened, charred, mess. A few buildings still smoldering...')
         p1.HasDiscoveredTown = True
 
-    # TODO: If player goes to Inn or Blacksmith, they're still in Town per se
     isPlayerAtTown = True
     while isPlayerAtTown == True:
 
@@ -337,6 +339,7 @@ def innDrink():
     time.sleep(1)
     negativeHealthAmount = random.randint(-5,-1)
     p1.UpdateHealth(negativeHealthAmount)
+
     print('The room starts to spin. What\'s in thi..s?')
     print('You have lost {} HP. It was worth it though!'.format(abs(negativeHealthAmount)))
     print('Taking another sip, you are now filled with a little more courage!')
@@ -361,10 +364,9 @@ def blacksmith():
 
     artwork.showBlacksmith()
 
-    # TODO: show something based on just arriving in town, stick gone, etc
     print('The Blacksmith sees you approaching, as he hammers on a shiny blade. He starts to grin.')
     time.sleep(1)
-    # TODO: Make this part dynamic if you have no weapon, armor, or < X money?
+    # TODO: Make this part dynamic for when you have just a stick
     print('As you move closer, he sees you have nothing. No weapon. No armor. No ching-a-ling of coin in your pocket.')
     time.sleep(1)
     print('His facial expression goes soft. You stop short and wonder if you should just go find another stick.')
@@ -399,6 +401,16 @@ def exploreForest():
     artwork.showForest()
         
     print('Into the forest you go!')
+
+    if p1.Level == 1 and p1.HasDiscoveredTown == False:
+        print('In the distance, you hear people talking and children laughing. You turn right and walk towards the noises.')
+        print('You stop in your tracks. A wall of thorny blackberry bushes. You take a deep breath...')
+        time.sleep(1)
+        print('Oooh! Owwww! Ouch!')
+        time.sleep(0.5)
+        print('After many more pokes, prods, cuts and yelps, you\'ve found the way to Town.')
+        p1.HasDiscoveredTown = True
+        return
 
     if IsForestEvent(): # random things that can help/hurt. If one occurs, exit out of the next piece back to menu
         return
@@ -463,7 +475,7 @@ def doAction(action):
         blacksmith()
 
     elif action == 'innStay':
-        print('You head to your room. Its not much. There is a funny smell, but it will suffice.')
+        print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
         saveGame()
         sys.exit()
 
@@ -498,8 +510,6 @@ p1 = player.Player(playerName)
 # Display Stats
 displayPlayerStats()
 
-print('You stand at the edge, staring at the narrow pathway in...')
-
 #
 # GAME LOOP
 #
@@ -507,7 +517,7 @@ while exitGame == False:
 
     p1.UpdateLevel()
 
-    if p1.Level < 1:
+    if p1.HasDiscoveredTown == False:
         print('''
         -= MENU =-
         
@@ -517,7 +527,7 @@ while exitGame == False:
         [Q]uit.
         
         ''')
-    elif p1.Level >= 1:
+    elif p1.HasDiscoveredTown:
         print('''
         -= MENU =-
         
@@ -540,14 +550,11 @@ while exitGame == False:
     elif command == 'S':
         doAction('stats')
 
-    #elif command == 'I':
-        #doAction('inn')
-    #TODO - implement the town to access the Inn and such
-    elif command == 'T':
+    elif command == 'T' and p1.HasDiscoveredTown:
         doAction('town')
 
     elif command == 'Q':
         exitGame = True
 
     elif command == 'D':
-            p1.Level = 2
+            p1.HasDiscoveredTown = True
