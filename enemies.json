@@ -1,0 +1,98 @@
+{
+    "Lizzard": {
+        "level": 1,
+        "health": 1,
+        "damage": 2,
+        "maxxp": 2
+    },
+    "Rat": {
+        "level": 1,
+        "health": 2,
+        "damage": 2,
+        "maxxp": 2
+    },
+    "Bat": {
+        "level": 1,
+        "health": 3,
+        "damage": 3,
+        "maxxp": 3
+    },
+    "Squirrel": {
+        "level": 1,
+        "health": 5,
+        "damage": 5,
+        "maxxp": 3
+    },
+    "Snake": {
+        "level": 1,
+        "health": 5,
+        "damage": 10,
+        "maxxp": 8
+    },
+    "Bunny": {
+        "level": 1,
+        "health": 10,
+        "damage": 5,
+        "maxxp": 8
+    },
+    "Raccoon": {
+        "level": 1,
+        "health": 15,
+        "damage": 15,
+        "maxxp": 10
+    },
+    "Poisonus Frog": {
+        "level": 1,
+        "health": 15,
+        "damage": 12,
+        "maxxp": 10
+    },
+    "Weasel": {
+        "level": 2,
+        "health": 20,
+        "damage": 25,
+        "maxxp": 12
+    },
+    "Badger": {
+        "level": 2,
+        "health": 20,
+        "damage": 30,
+        "maxxp": 15
+    },
+    "Wolverine": {
+        "level": 2,
+        "health": 30,
+        "damage": 40,
+        "maxxp": 20
+    },
+    "Warthog": {
+        "level": 3,
+        "health": 30,
+        "damage": 50,
+        "maxxp": 20
+    },
+    "Wolf": {
+        "level": 3,
+        "health": 40,
+        "damage": 55,
+        "maxxp": 30
+    },
+    "Bear": {
+        "level": 3,
+        "health": 50,
+        "damage": 75,
+        "maxxp": 40
+    },
+    "Mountain Lion": {
+        "level": 3,
+        "health": 50,
+        "damage": 75,
+        "maxxp": 40
+    },
+    "Blue Dragon": {
+        "level": 4,
+        "health": 150,
+        "damage": 125,
+        "maxxp": 75
+    }
+}

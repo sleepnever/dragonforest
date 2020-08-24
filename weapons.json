@@ -1,14 +1,42 @@
 {
-    "stick": {
-        "name": "Battle Stick",
+    "Battle Stick": {
         "damage": 5,
         "maxDamage": 10,
         "cost": 0
     },
-    "woodbat": {
-        "name": "Wood Bat",
+    "Wood Bat": {
         "damage": 15,
         "maxDamage": 20,
         "cost": 10
+    },
+    "Dagger": {
+        "damage": 20,
+        "maxDamage": 22,
+        "cost": 20
+    },
+    "Spear": {
+        "damage": 20,
+        "maxDamage": 22,
+        "cost": 20
+    },
+    "Short Sword": {
+        "damage": 25,
+        "maxDamage": 30,
+        "cost": 40
+    },
+    "Long Sword": {
+        "damage": 30,
+        "maxDamage": 35,
+        "cost": 45
+    },
+    "Double-Bladed Axe": {
+        "damage": 40,
+        "maxDamage": 60,
+        "cost": 100
+    },
+    "Dragon Bone Sword": {
+        "damage": 100,
+        "maxDamage": 150,
+        "cost": 500
     }
 }
