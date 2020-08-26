@@ -3,18 +3,17 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 8/23/2020
+# Updated 8/25/2020
 #
 # TODO
 # -Search code for TODO comments
 # -What am I doing with npc.py?
 # -Move more long story pieces into textblocks.py (?) or just remove it
 # -When player levels up, how to get Armor and new weapons?
-# -Weapon class or some other structure
-#   -Weapon Name, Damage, Cost
 # -Enemies
 #   -Add max experience an enemy will give you so randInt(1,max)
-#   -Update Enemy class attributes (name -> Name, etc), add methods, etc
+#   -Refactor Enemy dictionaries into a class as with Weapon
+#   -Add/Update enemies.json combining the various dictionaries
 #   -Previous level enemies should be included in random.choice() selection for more variety, smash listes together
 # -Story
 #   -Need whatever the mystery of the forest is
@@ -22,6 +21,8 @@
 #   -If save file exists with username, ask to load?
 # -Artwork
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
+# -General
+#   -Refactor DFModules -> /modules, put *.json into /data, etc
 #----------------------------
 
 # Python Libraries
@@ -34,11 +35,17 @@ import configparser
 import os
 from datetime import timedelta
 
+# for JSON loading
+import json
+from collections import OrderedDict
+from pathlib import Path, PureWindowsPath
+
 # My Custom Game Modules
 from DFModules import artwork
 from DFModules import textblocks
-from DFModules import player
+from DFModules.player import Player
 from DFModules import enemy
+
 
 # Name:Health
 forestEnemiesLvl0 = {'Lizzard':2, 'Squirrel':5, 'Rat':5, 'Bat':10, 'Snake':10, 'Bunny':10, 'Raccoon':15, 'Poisonous Frog':15, 'Skunk':15}
@@ -49,9 +56,6 @@ forestEnemiesLvl4 = {'DRAGON BOSS':1000}
 
 enemyAdjectives = ['growling','angry','crazy','wild','cranky','hangry','scared','rabid','mean','scary','fierce','irritable','ferocious']
 
-# Name:Damage
-weapons = {'Stick':5, 'Wood Bat':10, 'Dagger':12, 'Spear':15, 'Short Sword':20, 'Long Sword':22, 'Double-Bladed Axe':30, 'Dragon Bone Sword':50}
-
 noCampingStrings = ['You can''t camp all day, go do something!','Such a shame you have no wood for the fire.','There''s bear crap everywhere!! Look elsewhere.']
 
 # Constants
@@ -60,14 +64,27 @@ LUCK_DRAGON_NUMBER = 13 # if the rand gen picks 13, get a prize in the forest
 CONFIG_FILE = 'configData.ini'
 GAMESAVE_FILE = 'player.ini'
 
-
 #
 # Functions
 #
 
+def loadWeaponsFromJson():
+
+    # use a Windows path
+    filename = PureWindowsPath("DragonForest\\weapons.json")
+
+    # PathLib will convert the path correctly for the OS
+    correctPath = Path(filename)
+
+    with open(correctPath, mode="r") as json_file:
+    # object_pairs_hook=OrderedDict will load JSON data in order
+        weapons = json.load(json_file, object_pairs_hook=OrderedDict)
+
+    return weapons
+
 def loadGame():
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.getcwd(),GAMESAVE_FILE))
+    config.read(os.path.join(os.getcwd(),GAMESAVE_FILE)) # TODO: Update to use PathLib
 
     p1.Name = config['PLAYER']['Name']
     p1.Level = config['PLAYER']['Level']
@@ -76,7 +93,7 @@ def loadGame():
     p1.MaxArmor = config['PLAYER']['MaxArmor']
     p1.Armor = config['PLAYER']['Armor']
     p1.Xp = config['PLAYER']['Xp']
-    p1.Weapon = config['PLAYER']['Weapon']
+    p1.Weapon = config['PLAYER']['Weapon'] # TODO: fix for new Weapon class
     p1.Money = config['PLAYER']['Money']
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
 
@@ -93,11 +110,12 @@ def saveGame():
         'MaxArmor':p1.MaxArmor,
         'Armor':p1.Armor,
         'Xp':p1.Xp,
-        'Weapon':p1.Weapon,
+        'Weapon':p1.Weapon, # TODO: fix for new Weapon class
         'Money':p1.Money,
         'LastTimeCamped':p1.LastTimeCamped
         }
     
+    # TODO: Update to use PathLib
     with open(os.path.join(os.getcwd(),GAMESAVE_FILE),'w') as configFile:
         config.write(configFile)
 
@@ -152,7 +170,7 @@ def displayPlayerStats():
     print('| Player Name     : {}'.format(p1.Name))
     print('| Health (HP)     : {}/{}'.format(p1.Health,p1.MaxHealth))
     print('| Armor  (AP)     : {}/{}'.format(p1.Armor,p1.MaxArmor))
-    print('| Weapon / Damage : {} / {}'.format(p1.Weapon, p1.WeaponDamage)) #TODO: Damage not in save file yet
+    print('| Weapon / Damage : {} / {}'.format(p1.Weapon.Name, p1.Weapon.Damage))
     print('| Experience (XP) : {}'.format(p1.Xp))
     print('| Coins           : {}'.format(p1.Money))
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
@@ -178,7 +196,7 @@ def attack(enemyObj):
 
     while p1.IsDead() == False and enemyObj.isDead() == False:
         print()
-        print('You swing your {} at the {}'.format(p1.Weapon, enemyObj.name))
+        print('You swing your {} at the {}'.format(p1.Weapon.Name, enemyObj.name))
 
         # Get random damage range values
         p1_damage = random.randint(0, enemyObj.maxDamage)
@@ -427,7 +445,7 @@ def exploreForest():
     e1 = getRandomEnemy(p1.Level)
 
     print('A {} {} with {} HP and {} Damage jumps out!'.format(random.choice(enemyAdjectives),e1.name, e1.totalHealth, e1.maxDamage))
-    print('You grip your {}, with it''s {} Damage.'.format(p1.Weapon, weapons[p1.Weapon]))
+    print('You grip your {}, with it''s {} Damage.'.format(p1.Weapon.Name, p1.Weapon.Damage))
 
     print()
     action = input('Do you want to attack? Y/N: ').upper()
@@ -501,7 +519,7 @@ if playerName == '' or len(playerName) < 1:
     sys.exit()
 
 # Create player
-p1 = player.Player(playerName)
+p1 = Player(playerName, loadWeaponsFromJson())
 
 # Load Game -- TODO: if player.ini exists, load. If not, ask for name
 #                     and create the file

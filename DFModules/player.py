@@ -1,26 +1,56 @@
 import math
 
-class Player:
+from DFModules.weapon import Weapon
+
+class Player():
     """ Player """
 
-    # any variables up here are class level and shared by every instance
+    # any variables up here are class level and shared by every instance (static)
     _maxHealth = 100
     _maxArmor = 200
 
-    def __init__(self, name):
-        self.Name = name    # instance level, specific to the created instance and public
+    def __init__(self, name, weaponData):
+        self.Name = name    # specific to the created instance and public (instance)
         self.Level = 0
         self.MaxHealth = self._maxHealth
         self.Health = self._maxHealth # start with max
         self.MaxArmor = self._maxArmor
         self.Armor = 0
         self.Xp = 0
-        # Weapon should come from a/the Weapon class so this can be updated properly
-        self.Weapon = 'Stick'
-        self.WeaponDamage = 5
         self.Money = 2
         self.LastTimeCamped = None
         self.HasDiscoveredTown = False
+
+        self.WeaponData = weaponData
+        # Instantiate Weapon into a instance var in Player
+        self.Weapon = self.GetWeapon('Stick')
+        
+    def GetWeapon(self, weaponName):
+        """ Search OrderedDict of Weapons and return a Weapon object if found """
+        for weapon in self.WeaponData['weapons']:
+            if weapon['name'] == weaponName:
+                return Weapon(weapon['name'],weapon['damage'],weapon['maxDamage'],weapon['cost'])
+
+    
+    def BuyWeapon(self, weaponName):
+        """ Assigns the weapon to the Player if Player has enough Money """
+
+        #if self.Money >= self.WeaponClass.GetWeapon(weaponName)['cost']:
+        #    self.Weapon = self.WeaponClass.GetWeapon(weaponName)
+        #    self.Money -= self.Weapon['cost']
+        #    return True
+        
+        return False
+    
+    # Return bool if weapon was upgraded
+    def UpgradeWeapon(self, damage):
+        """ Upgrade damage on weapon, but no more than maxDamage allowed """
+        #if damage < self.Weapon['maxDamage']:
+        #    self.Weapon['damage'] += damage
+        #    return True
+
+        return False
+
 
     def CalculateDamage(self, damage): # health and armor
         # armor should take the brunt of the hit first, but health should still be affected
@@ -65,3 +95,22 @@ class Player:
 
     def IsDead(self):
         return True if (self.Health <= 0) else False
+
+# DEBUG/TEST: python player.py
+"""
+debugPlayer = Player("Bjork")
+print('Player has weapon and money: ')
+print(debugPlayer.Weapon) # stick
+print(debugPlayer.Money) # 2
+print(debugPlayer.Weapon['cost']) # 0
+# playerClass.WeaponClassInstance.Method(string) returns a Weapon object, call [cost]
+if debugPlayer.Money >= debugPlayer.WeaponClass.GetWeapon('Wood Bat')['cost']:
+    debugPlayer.BuyWeapon('Wood Bat')
+else:
+    print('You don\'t have enough money for that')
+
+print(debugPlayer.Money) # -8
+print(debugPlayer.Weapon)
+debugPlayer.UpgradeWeapon(10)
+print(debugPlayer.Weapon['damage'])
+"""
