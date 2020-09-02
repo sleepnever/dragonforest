@@ -3,18 +3,13 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 8/25/2020
+# Updated 9/2/2020
 #
 # TODO
 # -Search code for TODO comments
 # -What am I doing with npc.py?
 # -Move more long story pieces into textblocks.py (?) or just remove it
 # -When player levels up, how to get Armor and new weapons?
-# -Enemies
-#   -Add max experience an enemy will give you so randInt(1,max)
-#   -Refactor Enemy dictionaries into a class as with Weapon
-#   -Add/Update enemies.json combining the various dictionaries
-#   -Previous level enemies should be included in random.choice() selection for more variety, smash listes together
 # -Story
 #   -Need whatever the mystery of the forest is
 # -Load game
@@ -44,18 +39,10 @@ from pathlib import Path, PureWindowsPath
 from DFModules import artwork
 from DFModules import textblocks
 from DFModules.player import Player
-from DFModules import enemy
+from DFModules.enemy import Enemy
 
-
-# Name:Health
-forestEnemiesLvl0 = {'Lizzard':2, 'Squirrel':5, 'Rat':5, 'Bat':10, 'Snake':10, 'Bunny':10, 'Raccoon':15, 'Poisonous Frog':15, 'Skunk':15}
-forestEnemiesLvl1 = {'Weasel':25, 'Badger':30, 'Rabid Dog':30, 'Wolverine':40}
-forestEnemiesLvl2 = {'Warthog':50, 'Wolf':55, 'Bear':75, 'Mountain Lion':75}
-forestEnemiesLvl3 = {'Blue Dragon':100, 'Purple Dragon':200, 'Black Dragon':300}
-forestEnemiesLvl4 = {'DRAGON BOSS':1000}
-
+# Global strings # TODO: put elsewhere
 enemyAdjectives = ['growling','angry','crazy','wild','cranky','hangry','scared','rabid','mean','scary','fierce','irritable','ferocious']
-
 noCampingStrings = ['You can''t camp all day, go do something!','Such a shame you have no wood for the fire.','There''s bear crap everywhere!! Look elsewhere.']
 
 # Constants
@@ -81,6 +68,20 @@ def loadWeaponsFromJson():
         weapons = json.load(json_file, object_pairs_hook=OrderedDict)
 
     return weapons
+
+
+def loadEnemiesFromJson():
+
+    # use a Windows path
+    filename = PureWindowsPath("DragonForest\\enemies.json")
+
+    correctPath = Path(filename)
+
+    with open(correctPath, mode="r") as json_file:
+        enemies = json.load(json_file, object_pairs_hook=OrderedDict)
+
+    return enemies
+
 
 def loadGame():
     config = configparser.ConfigParser()
@@ -176,49 +177,48 @@ def displayPlayerStats():
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
 
-# creates an enemy obj based on player level
-def getRandomEnemy(level):
 
-    if level == 0:
-        enemyName = random.choice(list(forestEnemiesLvl0.keys()))
-        enemyObj = enemy.Enemy(enemyName, forestEnemiesLvl0[enemyName], math.ceil((forestEnemiesLvl0[enemyName] / 2)*1.2) )
-    elif level == 1:
-        enemyName = random.choice(list(forestEnemiesLvl1.keys()))
-        enemyObj = enemy.Enemy(enemyName, forestEnemiesLvl1[enemyName], math.ceil((forestEnemiesLvl1[enemyName] / 2)*1.2) )
-    elif level == 2:
-        enemyName = random.choice(list(forestEnemiesLvl2.keys()))
-        enemyObj = enemy.Enemy(enemyName, forestEnemiesLvl2[enemyName], math.ceil((forestEnemiesLvl2[enemyName] / 2)*1.2) )
+def CreateEnemy(playerLevel):
 
-    return enemyObj
+    playerLevelEnemyList = []
+
+    # search through the JSON data to find Enemies that are <= level of the Player
+    for enemy in enemyData['enemies']:
+        if enemy['level'] <= playerLevel:
+            playerLevelEnemyList.append(enemy)
     
+    # From the list, randomly choose an enemy
+    randomEnemyObj = random.choice(list(playerLevelEnemyList))
+    
+    return Enemy(randomEnemyObj)
+
 
 def attack(enemyObj):
 
-    while p1.IsDead() == False and enemyObj.isDead() == False:
+    while p1.IsDead() == False and enemyObj.IsDead() == False:
         print()
-        print('You swing your {} at the {}'.format(p1.Weapon.Name, enemyObj.name))
+        print('You swing your {} at the {}'.format(p1.Weapon.Name, enemyObj.Name))
 
         # Get random damage range values
-        p1_damage = random.randint(0, enemyObj.maxDamage)
-        enemyObj_damage = random.randint(0, 10) # TODO: depends on enemyLevel, can call forestEnemies#[key]
+        p1_damage = random.randint(0, p1.Weapon.Damage)
+        enemy_damage = random.randint(0, enemyObj.Damage)
 
         # Calculate Damage
         p1.CalculateDamage(p1_damage)
-        enemyObj.currentHealth = enemyObj.currentHealth - enemyObj_damage
+        enemyObj.Health = enemyObj.Health - enemy_damage
 
         # Check if player or enemy is dead
-        if (enemyObj.isDead()):
-            # TODO: BUG -> hitting an enemy for X damage, where X should not be more than p1 weapon damage
-            print('You hit the {} for {} damage, and killed it!'.format(enemyObj.name, enemyObj_damage))
+        if (enemyObj.IsDead()):
+            print('You hit the {} for {} damage, and killed it!'.format(enemyObj.Name, p1.Weapon.Damage))
 
-            # gain player XP -- TODO levels, experience; should be based on level of enemy
-            addedXp = random.randint(1,10)
+            addedXp = random.randint(1, enemyObj.MaxXp)
             p1.AddXp(addedXp)
             print('You have gained {} XP'.format(addedXp))
+
             return
             
         else:
-            print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.name, enemyObj_damage, enemyObj.currentHealth))
+            print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.Name, enemy_damage, enemyObj.Health))
             
         if (p1.IsDead()):
             print('{} is hit with {} damage and has died! <<GAME OVER>>'.format(p1.Name, str(p1_damage)))
@@ -254,9 +254,9 @@ def camp():
     # Set date time camped
     p1.LastTimeCamped = datetime.datetime.now()
     
+    addedHealth = random.randint(1,10)
+
     # don't exceed max health when adding health
-    addedHealth = random.randint(1,5)
-    
     if p1.Health < p1.MaxHealth:
         p1.UpdateHealth(addedHealth)
         print('<Yawwwwn> you lazily wake up, feeling much better. +{} HP gained.'.format(addedHealth))
@@ -442,9 +442,10 @@ def exploreForest():
     # Random luck lottery
     luckDragon()
     
-    e1 = getRandomEnemy(p1.Level)
+    # Create enemy based on Player's level
+    enemy = CreateEnemy(p1.Level)
 
-    print('A {} {} with {} HP and {} Damage jumps out!'.format(random.choice(enemyAdjectives),e1.name, e1.totalHealth, e1.maxDamage))
+    print('A {} {} with {} HP and {} Damage jumps out!'.format(random.choice(enemyAdjectives),enemy.Name, enemy.Health, enemy.Damage))
     print('You grip your {}, with it''s {} Damage.'.format(p1.Weapon.Name, p1.Weapon.Damage))
 
     print()
@@ -454,7 +455,7 @@ def exploreForest():
     if action == 'Y':
 
         # Call Attack
-        attack(e1)
+        attack(enemy)
 
         # Fight is over
         print('\nThe fight has left you with {}/{} HP'.format(p1.Health,p1.MaxHealth))
@@ -520,6 +521,9 @@ if playerName == '' or len(playerName) < 1:
 
 # Create player
 p1 = Player(playerName, loadWeaponsFromJson())
+
+# Load the enemy data
+enemyData = loadEnemiesFromJson()
 
 # Load Game -- TODO: if player.ini exists, load. If not, ask for name
 #                     and create the file
