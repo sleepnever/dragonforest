@@ -17,7 +17,7 @@
 # -Artwork
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
 # -General
-#   -Refactor DFModules -> /modules, put *.json into /data, etc
+#
 #----------------------------
 
 # Python Libraries
@@ -58,7 +58,7 @@ GAMESAVE_FILE = 'player.ini'
 def loadWeaponsFromJson():
 
     # use a Windows path
-    filename = PureWindowsPath("DragonForest\\weapons.json")
+    filename = PureWindowsPath("DragonForest\\Data\\weapons.json")
 
     # PathLib will convert the path correctly for the OS
     correctPath = Path(filename)
@@ -73,7 +73,7 @@ def loadWeaponsFromJson():
 def loadEnemiesFromJson():
 
     # use a Windows path
-    filename = PureWindowsPath("DragonForest\\enemies.json")
+    filename = PureWindowsPath("DragonForest\\Data\\enemies.json")
 
     correctPath = Path(filename)
 
