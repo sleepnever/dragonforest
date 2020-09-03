@@ -58,7 +58,7 @@ GAMESAVE_FILE = 'player.ini'
 def loadWeaponsFromJson():
 
     # use a Windows path
-    filename = PureWindowsPath("DragonForest\\Data\\weapons.json")
+    filename = PureWindowsPath("Data\\weapons.json")
 
     # PathLib will convert the path correctly for the OS
     correctPath = Path(filename)
@@ -73,7 +73,7 @@ def loadWeaponsFromJson():
 def loadEnemiesFromJson():
 
     # use a Windows path
-    filename = PureWindowsPath("DragonForest\\Data\\enemies.json")
+    filename = PureWindowsPath("Data\\enemies.json")
 
     correctPath = Path(filename)
 
