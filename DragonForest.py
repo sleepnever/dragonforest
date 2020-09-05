@@ -288,8 +288,6 @@ def town():
     isPlayerAtTown = True
     while isPlayerAtTown == True:
 
-        artwork.showTown()
-        
         print()
         print('-= TOWN MENU =-')
         print()
@@ -539,22 +537,22 @@ while exitGame == False:
 
     p1.UpdateLevel()
 
-    if p1.HasDiscoveredTown == False:
+    if p1.Level >= 1 and p1.HasDiscoveredTown == True:
         print('''
         -= MENU =-
         
-        [E]xplore the forest         [S]tats
-        [C]amp
+        [E]xplore the Forest           [S]tats
+        [C]amp                         [T]own
 
         [Q]uit.
         
         ''')
-    elif p1.HasDiscoveredTown:
+    else:
         print('''
         -= MENU =-
         
-        [E]xplore the forest           [S]tats
-        [C]amp                         [T]own
+        [E]xplore the Forest         [S]tats
+        [C]amp
 
         [Q]uit.
         
@@ -579,4 +577,5 @@ while exitGame == False:
         exitGame = True
 
     elif command == 'D':
+            p1.AddXp(30)
             p1.HasDiscoveredTown = True
