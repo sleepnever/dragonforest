@@ -3,7 +3,7 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/2/2020
+# Updated 9/5/2020
 #
 # TODO
 # -Search code for TODO comments
@@ -94,14 +94,16 @@ def loadGame():
     p1.MaxArmor = config['PLAYER']['MaxArmor']
     p1.Armor = config['PLAYER']['Armor']
     p1.Xp = config['PLAYER']['Xp']
-    p1.Weapon = config['PLAYER']['Weapon'] # TODO: fix for new Weapon class
+    p1.Weapon.Name = config['PLAYER']['Weapon']
     p1.Money = config['PLAYER']['Money']
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
+    p1.HasDiscoveredTown = config['PLAYER']['HasDiscoveredTown']
 
 def saveGame():
 
     print('< Saving Game >')
-    config = configparser.ConfigParser()
+    # allow_no_value bug: https://github.com/ralphbean/bugwarrior/pull/600
+    config = configparser.ConfigParser(allow_no_value=True)
 
     config['PLAYER'] = {
         'Name':p1.Name,
@@ -110,10 +112,11 @@ def saveGame():
         'Health':p1.Health,
         'MaxArmor':p1.MaxArmor,
         'Armor':p1.Armor,
-        'Xp':p1.Xp,
-        'Weapon':p1.Weapon, # TODO: fix for new Weapon class
+        'Xp':p1.Xp),
+        'Weapon':p1.Weapon.Name,
         'Money':p1.Money,
-        'LastTimeCamped':p1.LastTimeCamped
+        'LastTimeCamped':p1.LastTimeCamped, # can have no value
+        'HasDiscoveredTown':p1.HasDiscoveredTown
         }
     
     # TODO: Update to use PathLib
@@ -177,6 +180,16 @@ def displayPlayerStats():
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
 
+def PlayerCanStayAtInn():
+
+    if p1.Level == 1 and p1.Money >= 5:
+        return True
+    elif p1.Level == 2 and p1.Money >= 25:
+        return True
+    elif p1.Level == 3 and p1.Money >= 40:
+        return True
+
+    return False
 
 def CreateEnemy(playerLevel):
 
@@ -213,7 +226,7 @@ def attack(enemyObj):
 
             addedXp = random.randint(1, enemyObj.MaxXp)
             p1.AddXp(addedXp)
-            print('You have gained {} XP'.format(addedXp))
+            print('\n\nYou have gained {} XP'.format(addedXp))
 
             return
             
@@ -288,16 +301,17 @@ def town():
     isPlayerAtTown = True
     while isPlayerAtTown == True:
 
-        print()
-        print('-= TOWN MENU =-')
-        print()
-        print('[G]o to the Inn')
-        print('[V]isit Blacksmith')
-        print('[T]alk to random stranger')
-        print('[L]eave Town')
-        print()
+        print('''
+    -= TOWN MENU =-
 
-        action = input('Town Command: ').upper()
+    [G]o to the Inn
+    [V]isit Blacksmith
+    [T]alk to a Random Stranger
+    
+    [L]eave Town
+        ''')
+
+        action = input('Command: ').upper()
         
         if action == 'G':
             doAction('townInn')
@@ -325,18 +339,25 @@ def inn():
     isPlayerAtInn = True
     while isPlayerAtInn == True:
 
-        print('-= INN MENU =-')
-        print()
-        print('[G]et a room (Save & Quit)')
-        print('[O]rder a drink')
-        print('[R]ead the town news')
-        print('[L]eave the Inn')
+        print('''
+    -= INN MENU =-
 
-        action = input('Inn Command: ').upper()
+    [G]et a Room
+    [O]rder a Drink
+    [R]ead the Town News
+
+    [L]eave the Inn        
+        ''')
+
+        action = input('Command: ').upper()
         
         if action == 'G':
-            isPlayerAtInn = False
-            doAction('innStay')
+            # Can player afford to stay?
+            if PlayerCanStayAtInn():
+                isPlayerAtInn = False
+                doAction('innStay')
+            else:
+                print('\n"Sorry," says the Innkeeper, "but you don''t have enough to stay.')
 
         elif action == 'O':
             doAction('innDrink')
@@ -382,26 +403,32 @@ def blacksmith():
 
     print('The Blacksmith sees you approaching, as he hammers on a shiny blade. He starts to grin.')
     time.sleep(1)
-    # TODO: Make this part dynamic for when you have just a stick
-    print('As you move closer, he sees you have nothing. No weapon. No armor. No ching-a-ling of coin in your pocket.')
-    time.sleep(1)
-    print('His facial expression goes soft. You stop short and wonder if you should just go find another stick.')
-    print('You look down at your torn clothes (stupid raccoon), and that big scratch on your arm (crazy squirrel).')
-    print()
-    print('No, you need something. Anything really...')
-    print()
+    
+    if p1.Weapon.Name == "Stick" and p1.Money < 5:
+        print('As you move closer, he sees you have nothing. Well, a stick. No armor. No ching-a-ling of coin in your pocket.')    
+        time.sleep(1)
+        print('His facial expression goes soft. You stop short and wonder if you should just go find another stick.')
+        print('You look down at your torn clothes (stupid raccoon), and that big scratch on your arm (crazy squirrel).')
+        print()
+        print('No, you need something. Anything really...')
+        print()
+    else:
+        print('"Ahhh back again I see!"')
 
     isPlayerAtBlacksmith = True
     while isPlayerAtBlacksmith == True:
 
-        print('-= BLACKSMITH MENU =-')
-        print()
-        print('[T]alk to Blacksmith') # not sure yet
-        print('[W]eapon purchase/upgrade') # sub menu with weapon list and ability to upgrade Weapon attack
-        print('[A]rmor purchase/upgrade') # sub menu with armor list and ability to buy armor points
-        print('[L]eave the Blacksmith')
+        print('''
+    -= BLACKSMITH MENU =-
 
-        action = input('Blacksmith Command: ').upper()
+    [T]alk to Blacksmith
+    [W]eapon Purchase/Upgrade
+    [A]rmor Purchase/Upgrade
+
+    [L]eave Blacksmith
+        ''')
+
+        action = input('Command: ').upper()
         
         if action == 'T':
             pass
@@ -466,6 +493,24 @@ def exploreForest():
         time.sleep(2)
         print('and RUN AWAY to saftey!')
 
+def showHelp():
+
+    print('''
+    [GAME HELP]
+
+    Forest
+        Exploring the Forest allows you to gain eXPerience points and level up. Random events may
+        occur to help or hinder.
+
+    Camping
+        Regain some Health Points by taking a short snooze.
+
+    Town
+        Explore the offerings, including the Inn and Blacksmith. The Inn will allow you to Save your
+        Game by purchasing a night's stay, while the Blacksmith will help you upgrade your Weapons
+        and Armor. 
+    
+    ''')
 
 def doAction(action):
 
@@ -501,6 +546,9 @@ def doAction(action):
 
     elif action == 'innTownNews':
         innTownNews()
+    
+    elif action == 'help':
+        showHelp()
         
 
 #---------------------------
@@ -539,22 +587,23 @@ while exitGame == False:
 
     if p1.Level >= 1 and p1.HasDiscoveredTown == True:
         print('''
-        -= MENU =-
+    -= MENU =-
         
-        [E]xplore the Forest           [S]tats
-        [C]amp                         [T]own
+    [E]xplore the Forest           [S]tats
+    [C]amp                         [H]elp
+    [T]own
 
-        [Q]uit.
+    [Q]uit.
         
         ''')
     else:
         print('''
-        -= MENU =-
-        
-        [E]xplore the Forest         [S]tats
-        [C]amp
+    -= MENU =-
+    
+    [E]xplore the Forest         [S]tats
+    [C]amp                       [H]elp
 
-        [Q]uit.
+    [Q]uit.
         
         ''')
 
@@ -570,6 +619,9 @@ while exitGame == False:
     elif command == 'S':
         doAction('stats')
 
+    elif command == 'H':
+        doAction('help')
+
     elif command == 'T' and p1.HasDiscoveredTown:
         doAction('town')
 
@@ -578,4 +630,5 @@ while exitGame == False:
 
     elif command == 'D':
             p1.AddXp(30)
+            p1.Money += 30
             p1.HasDiscoveredTown = True

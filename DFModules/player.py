@@ -84,12 +84,16 @@ class Player():
             pass
         elif self.Xp >= 25 and self.Xp < 50:
             self.Level = 1
+            self.Money += 5
         elif self.Xp >= 50 and self.Xp < 150:
             self.Level = 2
+            self.Money += 10
         elif self.Xp >= 150 and self.Xp <= 500:
             self.Level = 3
+            self.Money += 25
         elif self.Xp >= 500 and self.Xp <= 750:
             self.Level = 4
+            self.Money += 50
 
         return self.Level
 
