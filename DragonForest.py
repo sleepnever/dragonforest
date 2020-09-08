@@ -3,7 +3,7 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/5/2020
+# Updated 9/8/2020
 #
 # TODO
 # -Search code for TODO comments
@@ -112,7 +112,7 @@ def saveGame():
         'Health':p1.Health,
         'MaxArmor':p1.MaxArmor,
         'Armor':p1.Armor,
-        'Xp':p1.Xp),
+        'Xp':p1.Xp,
         'Weapon':p1.Weapon.Name,
         'Money':p1.Money,
         'LastTimeCamped':p1.LastTimeCamped, # can have no value
@@ -134,13 +134,13 @@ def luckDragon():
 
         if prizeWon == 'money':
             print('It has given you 10 somewhat shiny coins.')
-            p1.Money += 10
+            p1.Money = 10
         elif prizeWon == 'health':
             print('You''ve gained 15 HP.')
-            p1.UpdateHealth(15)
+            p1.Health = 15
         elif prizeWon == 'armor':
             print('You''ve gained 10 AP.')
-            p1.UpdateArmor(10)
+            p1.Armor =10
         
         print()
 
@@ -153,14 +153,14 @@ def IsForestEvent():
         print('You found a bag of apples under a tree, which you greedily eat before the owner returns.')
         print('Feeling fat and happy, and maybe a bit guilty, at least you''ve restored 5 HP')
         print()
-        p1.UpdateHealth(5)
+        p1.Health = 5
         return True
 
     elif randInt == 20:
         print('So busy looking at everything, except where you are walking!')
         print('You trip over a log, and fall flat on your face, losing 10 HP')
         print()
-        p1.UpdateHealth(-10)
+        p1.Health = -10
         return True
 
     return False
@@ -225,7 +225,7 @@ def attack(enemyObj):
             print('You hit the {} for {} damage, and killed it!'.format(enemyObj.Name, p1.Weapon.Damage))
 
             addedXp = random.randint(1, enemyObj.MaxXp)
-            p1.AddXp(addedXp)
+            p1.Xp = addedXp
             print('\n\nYou have gained {} XP'.format(addedXp))
 
             return
@@ -271,7 +271,7 @@ def camp():
 
     # don't exceed max health when adding health
     if p1.Health < p1.MaxHealth:
-        p1.UpdateHealth(addedHealth)
+        p1.Health = addedHealth
         print('<Yawwwwn> you lazily wake up, feeling much better. +{} HP gained.'.format(addedHealth))
     else:
         print('<Yawwwwn> you lazily wake up, feeling about the same, but it was a good nap.')
@@ -375,7 +375,7 @@ def innDrink():
     
     time.sleep(1)
     negativeHealthAmount = random.randint(-5,-1)
-    p1.UpdateHealth(negativeHealthAmount)
+    p1.Health = negativeHealthAmount
 
     print('The room starts to spin. What\'s in thi..s?')
     print('You have lost {} HP. It was worth it though!'.format(abs(negativeHealthAmount)))
@@ -383,7 +383,7 @@ def innDrink():
     print()
 
     positiveArmorAmount = random.randint(1,4)
-    p1.UpdateArmor(positiveArmorAmount)
+    p1.Armor = positiveArmorAmount
     print('You have gained {} AP !'.format(positiveArmorAmount))
 
 def innTownNews():
@@ -629,6 +629,6 @@ while exitGame == False:
         exitGame = True
 
     elif command == 'D':
-            p1.AddXp(30)
-            p1.Money += 30
+            p1.Xp = 30
+            p1.Money = 50
             p1.HasDiscoveredTown = True
