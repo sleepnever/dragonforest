@@ -141,8 +141,8 @@ class Player():
 
         return False
 
-
-    def CalculateDamage(self, damage): # health and armor
+    # TODO: refactor this to a static helper for player and enemy use
+    def CalculateDamageTaken(self, damage):
         # armor should take the brunt of the hit first, but health should still be affected
         if self._armor == 0:
             self._health = self._health - damage

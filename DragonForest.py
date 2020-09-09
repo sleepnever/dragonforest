@@ -55,7 +55,7 @@ GAMESAVE_FILE = 'player.ini'
 # Functions
 #
 
-def loadWeaponsFromJson():
+def LoadWeaponsFromJson():
 
     # use a Windows path
     filename = PureWindowsPath("Data\\weapons.json")
@@ -70,7 +70,7 @@ def loadWeaponsFromJson():
     return weapons
 
 
-def loadEnemiesFromJson():
+def LoadEnemiesFromJson():
 
     # use a Windows path
     filename = PureWindowsPath("Data\\enemies.json")
@@ -83,7 +83,7 @@ def loadEnemiesFromJson():
     return enemies
 
 
-def loadGame():
+def LoadGame():
     config = configparser.ConfigParser()
     config.read(os.path.join(os.getcwd(),GAMESAVE_FILE)) # TODO: Update to use PathLib
 
@@ -99,7 +99,7 @@ def loadGame():
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
     p1.HasDiscoveredTown = config['PLAYER']['HasDiscoveredTown']
 
-def saveGame():
+def SaveGame():
 
     print('< Saving Game >')
     # allow_no_value bug: https://github.com/ralphbean/bugwarrior/pull/600
@@ -123,7 +123,7 @@ def saveGame():
     with open(os.path.join(os.getcwd(),GAMESAVE_FILE),'w') as configFile:
         config.write(configFile)
 
-def luckDragon():
+def LuckDragon():
 
     prize = ['money','health','armor']
     
@@ -140,7 +140,7 @@ def luckDragon():
             p1.Health = 15
         elif prizeWon == 'armor':
             print('You''ve gained 10 AP.')
-            p1.Armor =10
+            p1.Armor = 10
         
         print()
 
@@ -167,7 +167,7 @@ def IsForestEvent():
     # add more
 
 
-def displayPlayerStats():
+def DisplayPlayerStats():
     
     print()
     print('-=-=-=-=-=-=-=-=-=-STATS=-=-=-=-=-=-=-=-=-=-=-')
@@ -191,13 +191,13 @@ def PlayerCanStayAtInn():
 
     return False
 
-def CreateEnemy(playerLevel):
+def CreateEnemy():
 
     playerLevelEnemyList = []
 
     # search through the JSON data to find Enemies that are <= level of the Player
     for enemy in enemyData['enemies']:
-        if enemy['level'] <= playerLevel:
+        if enemy['level'] <= p1.Level:
             playerLevelEnemyList.append(enemy)
     
     # From the list, randomly choose an enemy
@@ -205,24 +205,26 @@ def CreateEnemy(playerLevel):
     
     return Enemy(randomEnemyObj)
 
-
-def attack(enemyObj):
+def Attack(enemyObj):
 
     while p1.IsDead() == False and enemyObj.IsDead() == False:
         print()
         print('You swing your {} at the {}'.format(p1.Weapon.Name, enemyObj.Name))
 
-        # Get random damage range values
-        p1_damage = random.randint(0, p1.Weapon.Damage)
-        enemy_damage = random.randint(0, enemyObj.Damage)
+        # Get random damage range values from 0 to upper values
+        p1_damageGiven = random.randint(0, p1.Weapon.Damage) # how much player deals
+        enemy_damageGiven = random.randint(0, enemyObj.Damage) # how much enemy deals
 
-        # Calculate Damage
-        p1.CalculateDamage(p1_damage)
-        enemyObj.Health = enemyObj.Health - enemy_damage
+        # Calculate Player's Damage taken from enemy, factoring in armor
+        p1.CalculateDamageTaken(enemy_damageGiven)
+
+        # Enemy's damage taken from player
+        # #TODO: enemy could have armor, so use above function and generalize it
+        enemyObj.Health = (-1 * p1_damageGiven)
 
         # Check if player or enemy is dead
         if (enemyObj.IsDead()):
-            print('You hit the {} for {} damage, and killed it!'.format(enemyObj.Name, p1.Weapon.Damage))
+            print('You hit the {} for {} damage, and killed it!'.format(enemyObj.Name, p1_damageGiven))
 
             addedXp = random.randint(1, enemyObj.MaxXp)
             p1.Xp = addedXp
@@ -231,17 +233,17 @@ def attack(enemyObj):
             return
             
         else:
-            print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.Name, enemy_damage, enemyObj.Health))
+            print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.Name, p1_damageGiven, enemyObj.Health))
             
         if (p1.IsDead()):
-            print('{} is hit with {} damage and has died! <<GAME OVER>>'.format(p1.Name, str(p1_damage)))
+            print('{} is hit with {} damage and has died! <<GAME OVER>>'.format(p1.Name, enemy_damageGiven))
             sys.exit()
         else:
-            print('You are hit with {} damage and have {} HP left.'.format(str(p1_damage),str(p1.Health)))
+            print('You are hit with {} damage and have {} HP left.'.format(enemy_damageGiven, p1.Health))
 
         time.sleep(1)
 
-def camp():
+def Camp():
 
     # Check to see if it's been at least MAX_TIME_BETWEEN_CAMP_MINUTES
     # since last camp to prevent +HP abuse
@@ -276,7 +278,7 @@ def camp():
     else:
         print('<Yawwwwn> you lazily wake up, feeling about the same, but it was a good nap.')
 
-def town():
+def Town():
 
     artwork.showTown()
 
@@ -314,18 +316,18 @@ def town():
         action = input('Command: ').upper()
         
         if action == 'G':
-            doAction('townInn')
+            DoAction('townInn')
 
         elif action == 'V':
-            doAction('townBlacksmith')
+            DoAction('townBlacksmith')
 
         elif action == 'T':
-            doAction('townTalkToNpc')
+            DoAction('townTalkToNpc')
 
         elif action == 'L':
             return  # should go back to the main game loop with main menu
 
-def inn():
+def Inn():
 
     artwork.showInn()
 
@@ -355,20 +357,20 @@ def inn():
             # Can player afford to stay?
             if PlayerCanStayAtInn():
                 isPlayerAtInn = False
-                doAction('innStay')
+                DoAction('innStay')
             else:
                 print('\n"Sorry," says the Innkeeper, "but you don''t have enough to stay.')
 
         elif action == 'O':
-            doAction('innDrink')
+            DoAction('innDrink')
 
         elif action == 'R':
-            doAction('innTownNews')
+            DoAction('innTownNews')
 
         elif action == 'L':
             isPlayerAtInn = False
 
-def innDrink():
+def InnDrink():
     
     print('You take a swig from the big jug...')
     print()
@@ -386,7 +388,7 @@ def innDrink():
     p1.Armor = positiveArmorAmount
     print('You have gained {} AP !'.format(positiveArmorAmount))
 
-def innTownNews():
+def InnTownNews():
     
     # TODO: Make this a lot more dynamic
     print('"Well...", Beatris says, "here\'s what I know."')
@@ -397,7 +399,7 @@ def innTownNews():
     # if player took a drink, throw in a funny line like this. Will need a flag in the player class
     print('And I think that drink I gave you was to kill the roaches. I have your drink right here.')
 
-def blacksmith():
+def Blacksmith():
 
     artwork.showBlacksmith()
 
@@ -439,19 +441,14 @@ def blacksmith():
         elif action == 'L':
             return
 
-def exploreForest():
+def ExploreForest():
 
     artwork.showForest()
         
     print('Into the forest you go!')
 
     if p1.Level == 1 and p1.HasDiscoveredTown == False:
-        print('In the distance, you hear people talking and children laughing. You turn right and walk towards the noises.')
-        print('You stop in your tracks. A wall of thorny blackberry bushes. You take a deep breath...')
-        time.sleep(1)
-        print('Oooh! Owwww! Ouch!')
-        time.sleep(0.5)
-        print('After many more pokes, prods, cuts and yelps, you\'ve found the way to Town.')
+        textblocks.showTownDiscovery()
         p1.HasDiscoveredTown = True
         return
 
@@ -465,10 +462,10 @@ def exploreForest():
     print()
 
     # Random luck lottery
-    luckDragon()
+    LuckDragon()
     
     # Create enemy based on Player's level
-    enemy = CreateEnemy(p1.Level)
+    enemy = CreateEnemy()
 
     print('A {} {} with {} HP and {} Damage jumps out!'.format(random.choice(enemyAdjectives),enemy.Name, enemy.Health, enemy.Damage))
     print('You grip your {}, with it''s {} Damage.'.format(p1.Weapon.Name, p1.Weapon.Damage))
@@ -480,7 +477,7 @@ def exploreForest():
     if action == 'Y':
 
         # Call Attack
-        attack(enemy)
+        Attack(enemy)
 
         # Fight is over
         print('\nThe fight has left you with {}/{} HP'.format(p1.Health,p1.MaxHealth))
@@ -493,67 +490,51 @@ def exploreForest():
         time.sleep(2)
         print('and RUN AWAY to saftey!')
 
-def showHelp():
 
-    print('''
-    [GAME HELP]
-
-    Forest
-        Exploring the Forest allows you to gain eXPerience points and level up. Random events may
-        occur to help or hinder.
-
-    Camping
-        Regain some Health Points by taking a short snooze.
-
-    Town
-        Explore the offerings, including the Inn and Blacksmith. The Inn will allow you to Save your
-        Game by purchasing a night's stay, while the Blacksmith will help you upgrade your Weapons
-        and Armor. 
-    
-    ''')
-
-def doAction(action):
+def DoAction(action):
 
     if action == 'talk':
         # do something.. need function/module for NPCs
         print('TODO: run into random NPC in forest, hear a story/get info')
         
     elif action == 'exploreForest':
-        exploreForest()
+        ExploreForest()
 
     elif action == 'stats':
-        displayPlayerStats()
+        DisplayPlayerStats()
 
     elif action == 'camp':
-        camp()
+        Camp()
 
     elif action == 'town':
-        town()
+        Town()
 
     elif action == 'townInn':
-        inn()
+        Inn()
 
     elif action == 'townBlacksmith':
-        blacksmith()
+        Blacksmith()
 
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
-        saveGame()
+        SaveGame()
         sys.exit()
 
     elif action == 'innDrink':
-        innDrink()
+        InnDrink()
 
     elif action == 'innTownNews':
-        innTownNews()
+        InnTownNews()
     
     elif action == 'help':
-        showHelp()
+        textblocks.showHelp()
         
 
 #---------------------------
 #       Game Start
 #--------------------------
+
+#def main():
 
 exitGame = False
 
@@ -565,18 +546,16 @@ playerName = input('What is thy name? ')
 if playerName == '' or len(playerName) < 1:
     sys.exit()
 
+# TODO: LoadGame() if <condition> exists. If not, ask for name and create the file
+
 # Create player
-p1 = Player(playerName, loadWeaponsFromJson())
+p1 = Player(playerName, LoadWeaponsFromJson())
 
 # Load the enemy data
-enemyData = loadEnemiesFromJson()
-
-# Load Game -- TODO: if player.ini exists, load. If not, ask for name
-#                     and create the file
-#loadGame()
+enemyData = LoadEnemiesFromJson()
 
 # Display Stats
-displayPlayerStats()
+DisplayPlayerStats()
 
 #
 # GAME LOOP
@@ -611,19 +590,19 @@ while exitGame == False:
     command = input('Command: ').upper()
 
     if command == 'E':
-        doAction('exploreForest')
+        DoAction('exploreForest')
         
     elif command == 'C':
-        doAction('camp')
+        DoAction('camp')
 
     elif command == 'S':
-        doAction('stats')
+        DoAction('stats')
 
     elif command == 'H':
-        doAction('help')
+        DoAction('help')
 
     elif command == 'T' and p1.HasDiscoveredTown:
-        doAction('town')
+        DoAction('town')
 
     elif command == 'Q':
         exitGame = True
@@ -632,3 +611,6 @@ while exitGame == False:
             p1.Xp = 30
             p1.Money = 50
             p1.HasDiscoveredTown = True
+
+#if __name__ == "__main__":
+#    main()
