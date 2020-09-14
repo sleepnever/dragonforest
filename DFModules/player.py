@@ -1,4 +1,5 @@
 import math
+import random
 
 from DFModules.weapon import Weapon
 
@@ -142,12 +143,30 @@ class Player():
         return False
 
     # TODO: refactor this to a static helper for player and enemy use
+    # Armor should take the brunt of the hit first, but health should still be affected
     def CalculateDamageTaken(self, damage):
-        # armor should take the brunt of the hit first, but health should still be affected
+        #print('DEBUG: CalculateDamageTaken(self, {})'.format(damage))
+
         if self._armor == 0:
             self._health = self._health - damage
+            healthDamage = damage
         else:
-            self._health = math.ceil((self._health * 0.001)*100) - abs(self._armor - damage)
+            # Ding the armor first by a little bit
+            #print('DEBUG: Armor Before Hit = {}'.format(self._armor))
+            damageMultiplier = random.uniform(0.001, 0.003)
+            armorDamage = int(math.ceil((self._armor * damageMultiplier)*100))
+            self._armor -= armorDamage
+            #print('DEBUG: Armor After Hit = {}'.format(self._armor))
+
+            # Take the amount of armor damage and and subtract it
+            # from the incoming damage amount, to then get how much
+            # damage will be taken  from the player's health
+            #print('DEBUG: Health Before Hit = {}'.format(self._health))
+            healthDamage = abs(damage - armorDamage)
+            self._health -= healthDamage
+            #print('DEBUG: Health After Hit/Armor absorb = {}'.format(self._health))
+
+        return healthDamage
 
     def UpdateLevel(self):
 

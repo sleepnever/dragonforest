@@ -3,7 +3,7 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/8/2020
+# Updated 9/14/2020
 #
 # TODO
 # -Search code for TODO comments
@@ -83,7 +83,7 @@ def LoadEnemiesFromJson():
     return enemies
 
 
-def LoadGame():
+def LoadGame(p1):
     config = configparser.ConfigParser()
     config.read(os.path.join(os.getcwd(),GAMESAVE_FILE)) # TODO: Update to use PathLib
 
@@ -99,7 +99,7 @@ def LoadGame():
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
     p1.HasDiscoveredTown = config['PLAYER']['HasDiscoveredTown']
 
-def SaveGame():
+def SaveGame(p1):
 
     print('< Saving Game >')
     # allow_no_value bug: https://github.com/ralphbean/bugwarrior/pull/600
@@ -123,7 +123,7 @@ def SaveGame():
     with open(os.path.join(os.getcwd(),GAMESAVE_FILE),'w') as configFile:
         config.write(configFile)
 
-def LuckDragon():
+def LuckDragon(p1):
 
     prize = ['money','health','armor']
     
@@ -145,7 +145,7 @@ def LuckDragon():
         print()
 
 # random forest events
-def IsForestEvent():
+def IsForestEvent(p1):
 
     randInt = random.randint(1,100)
 
@@ -167,7 +167,7 @@ def IsForestEvent():
     # add more
 
 
-def DisplayPlayerStats():
+def DisplayPlayerStats(p1):
     
     print()
     print('-=-=-=-=-=-=-=-=-=-STATS=-=-=-=-=-=-=-=-=-=-=-')
@@ -180,7 +180,7 @@ def DisplayPlayerStats():
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
 
-def PlayerCanStayAtInn():
+def PlayerCanStayAtInn(p1):
 
     if p1.Level == 1 and p1.Money >= 5:
         return True
@@ -191,7 +191,7 @@ def PlayerCanStayAtInn():
 
     return False
 
-def CreateEnemy():
+def CreateEnemy(p1, enemyData):
 
     playerLevelEnemyList = []
 
@@ -205,7 +205,7 @@ def CreateEnemy():
     
     return Enemy(randomEnemyObj)
 
-def Attack(enemyObj):
+def Attack(p1, enemyObj):
 
     while p1.IsDead() == False and enemyObj.IsDead() == False:
         print()
@@ -215,11 +215,8 @@ def Attack(enemyObj):
         p1_damageGiven = random.randint(0, p1.Weapon.Damage) # how much player deals
         enemy_damageGiven = random.randint(0, enemyObj.Damage) # how much enemy deals
 
-        # Calculate Player's Damage taken from enemy, factoring in armor
-        p1.CalculateDamageTaken(enemy_damageGiven)
-
         # Enemy's damage taken from player
-        # #TODO: enemy could have armor, so use above function and generalize it
+        # #TODO: enemy could have armor, so use the player function and generalize it
         enemyObj.Health = (-1 * p1_damageGiven)
 
         # Check if player or enemy is dead
@@ -234,7 +231,13 @@ def Attack(enemyObj):
             
         else:
             print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.Name, p1_damageGiven, enemyObj.Health))
-            
+
+        #TODO / BUG: I need to say something about armor took some of the hit, and return back
+        #            that final damage amount, and report it below. Otherwise 100, hit with 2, still 100
+
+        # Calculate Player's Damage taken from enemy, factoring in armor
+        enemy_damageGiven = p1.CalculateDamageTaken(enemy_damageGiven)
+
         if (p1.IsDead()):
             print('{} is hit with {} damage and has died! <<GAME OVER>>'.format(p1.Name, enemy_damageGiven))
             sys.exit()
@@ -243,7 +246,7 @@ def Attack(enemyObj):
 
         time.sleep(1)
 
-def Camp():
+def Camp(p1):
 
     # Check to see if it's been at least MAX_TIME_BETWEEN_CAMP_MINUTES
     # since last camp to prevent +HP abuse
@@ -278,7 +281,7 @@ def Camp():
     else:
         print('<Yawwwwn> you lazily wake up, feeling about the same, but it was a good nap.')
 
-def Town():
+def Town(p1):
 
     artwork.showTown()
 
@@ -316,18 +319,18 @@ def Town():
         action = input('Command: ').upper()
         
         if action == 'G':
-            DoAction('townInn')
+            DoAction('townInn', p1, None)
 
         elif action == 'V':
-            DoAction('townBlacksmith')
+            DoAction('townBlacksmith', p1, None)
 
         elif action == 'T':
-            DoAction('townTalkToNpc')
+            DoAction('townTalkToNpc', p1, None)
 
         elif action == 'L':
             return  # should go back to the main game loop with main menu
 
-def Inn():
+def Inn(p1):
 
     artwork.showInn()
 
@@ -355,22 +358,22 @@ def Inn():
         
         if action == 'G':
             # Can player afford to stay?
-            if PlayerCanStayAtInn():
+            if PlayerCanStayAtInn(p1):
                 isPlayerAtInn = False
-                DoAction('innStay')
+                DoAction('innStay', p1, None)
             else:
                 print('\n"Sorry," says the Innkeeper, "but you don''t have enough to stay.')
 
         elif action == 'O':
-            DoAction('innDrink')
+            DoAction('innDrink', p1, None)
 
         elif action == 'R':
-            DoAction('innTownNews')
+            DoAction('innTownNews', p1, None)
 
         elif action == 'L':
             isPlayerAtInn = False
 
-def InnDrink():
+def InnDrink(p1):
     
     print('You take a swig from the big jug...')
     print()
@@ -388,7 +391,7 @@ def InnDrink():
     p1.Armor = positiveArmorAmount
     print('You have gained {} AP !'.format(positiveArmorAmount))
 
-def InnTownNews():
+def InnTownNews(p1):
     
     # TODO: Make this a lot more dynamic
     print('"Well...", Beatris says, "here\'s what I know."')
@@ -399,7 +402,7 @@ def InnTownNews():
     # if player took a drink, throw in a funny line like this. Will need a flag in the player class
     print('And I think that drink I gave you was to kill the roaches. I have your drink right here.')
 
-def Blacksmith():
+def Blacksmith(p1):
 
     artwork.showBlacksmith()
 
@@ -441,7 +444,7 @@ def Blacksmith():
         elif action == 'L':
             return
 
-def ExploreForest():
+def ExploreForest(p1, enemyData):
 
     artwork.showForest()
         
@@ -452,7 +455,7 @@ def ExploreForest():
         p1.HasDiscoveredTown = True
         return
 
-    if IsForestEvent(): # random things that can help/hurt. If one occurs, exit out of the next piece back to menu
+    if IsForestEvent(p1): # random things that can help/hurt. If one occurs, exit out of the next piece back to menu
         return
 
     time.sleep(1)
@@ -462,10 +465,10 @@ def ExploreForest():
     print()
 
     # Random luck lottery
-    LuckDragon()
+    LuckDragon(p1)
     
     # Create enemy based on Player's level
-    enemy = CreateEnemy()
+    enemy = CreateEnemy(p1, enemyData)
 
     print('A {} {} with {} HP and {} Damage jumps out!'.format(random.choice(enemyAdjectives),enemy.Name, enemy.Health, enemy.Damage))
     print('You grip your {}, with it''s {} Damage.'.format(p1.Weapon.Name, p1.Weapon.Damage))
@@ -477,7 +480,7 @@ def ExploreForest():
     if action == 'Y':
 
         # Call Attack
-        Attack(enemy)
+        Attack(p1, enemy)
 
         # Fight is over
         print('\nThe fight has left you with {}/{} HP'.format(p1.Health,p1.MaxHealth))
@@ -491,81 +494,84 @@ def ExploreForest():
         print('and RUN AWAY to saftey!')
 
 
-def DoAction(action):
+def DoAction(action, playerObj, enemyData):
 
     if action == 'talk':
         # do something.. need function/module for NPCs
         print('TODO: run into random NPC in forest, hear a story/get info')
         
     elif action == 'exploreForest':
-        ExploreForest()
+        ExploreForest(playerObj, enemyData)
 
     elif action == 'stats':
-        DisplayPlayerStats()
+        DisplayPlayerStats(playerObj)
 
     elif action == 'camp':
-        Camp()
+        Camp(playerObj)
 
     elif action == 'town':
-        Town()
+        Town(playerObj)
 
     elif action == 'townInn':
-        Inn()
+        Inn(playerObj)
 
     elif action == 'townBlacksmith':
-        Blacksmith()
+        Blacksmith(playerObj)
 
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
-        SaveGame()
+        SaveGame(playerObj)
         sys.exit()
 
     elif action == 'innDrink':
-        InnDrink()
+        InnDrink(playerObj)
 
     elif action == 'innTownNews':
-        InnTownNews()
+        InnTownNews(playerObj)
     
     elif action == 'help':
         textblocks.showHelp()
-        
+
 
 #---------------------------
 #       Game Start
 #--------------------------
 
-#def main():
+def main():
 
-exitGame = False
+    exitGame = False
 
-artwork.showTitle()
-textblocks.showIntro()
+    artwork.showTitle()
+    textblocks.showIntro()
 
-playerName = input('What is thy name? ')
+    playerName = input('What is thy name? ')
 
-if playerName == '' or len(playerName) < 1:
-    sys.exit()
+    if playerName == '' or len(playerName) < 1:
+        sys.exit()
 
-# TODO: LoadGame() if <condition> exists. If not, ask for name and create the file
+    # TODO: LoadGame() if <condition> exists. If not, ask for name and create the file
 
-# Create player
-p1 = Player(playerName, LoadWeaponsFromJson())
+    # Load the weapon data
+    weaponData = LoadWeaponsFromJson()
 
-# Load the enemy data
-enemyData = LoadEnemiesFromJson()
+    # Load the enemy data
+    enemyData = LoadEnemiesFromJson()
 
-# Display Stats
-DisplayPlayerStats()
+    # Create Player
+    p1 = Player(playerName, weaponData)
 
-#
-# GAME LOOP
-#
-while exitGame == False:
+    # Display Stats
+    DisplayPlayerStats(p1)
 
-    p1.UpdateLevel()
+    #
+    # GAME LOOP
+    #
+    while exitGame == False:
 
-    if p1.Level >= 1 and p1.HasDiscoveredTown == True:
-        print('''
+        p1.UpdateLevel()
+
+        if p1.Level >= 1 and p1.HasDiscoveredTown == True:
+            print('''
     -= MENU =-
         
     [E]xplore the Forest           [S]tats
@@ -573,44 +579,45 @@ while exitGame == False:
     [T]own
 
     [Q]uit.
-        
-        ''')
-    else:
-        print('''
+            
+            ''')
+        else:
+            print('''
     -= MENU =-
     
     [E]xplore the Forest         [S]tats
     [C]amp                       [H]elp
 
     [Q]uit.
-        
-        ''')
+            
+            ''')
 
 
-    command = input('Command: ').upper()
+        command = input('Command: ').upper()
 
-    if command == 'E':
-        DoAction('exploreForest')
-        
-    elif command == 'C':
-        DoAction('camp')
+        if command == 'E':
+            DoAction('exploreForest', p1, enemyData)
+            
+        elif command == 'C':
+            DoAction('camp', p1, None)
 
-    elif command == 'S':
-        DoAction('stats')
+        elif command == 'S':
+            DoAction('stats', p1, None)
 
-    elif command == 'H':
-        DoAction('help')
+        elif command == 'H':
+            DoAction('help', None, None)
 
-    elif command == 'T' and p1.HasDiscoveredTown:
-        DoAction('town')
+        elif command == 'T' and p1.HasDiscoveredTown:
+            DoAction('town', p1, None)
 
-    elif command == 'Q':
-        exitGame = True
+        elif command == 'Q':
+            exitGame = True
 
-    elif command == 'D':
-            p1.Xp = 30
-            p1.Money = 50
-            p1.HasDiscoveredTown = True
+        elif command == 'D':
+                p1.Xp = 25
+                p1.Armor = 5
+                p1.Money = 50
+                p1.HasDiscoveredTown = True
 
-#if __name__ == "__main__":
-#    main()
+if __name__ == "__main__":
+    main()
