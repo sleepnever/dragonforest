@@ -9,7 +9,7 @@ I'm doing this as a project to learn Python. All ASCII art and code is by me - o
 ### How to Play
 1. Copy the folders /DFModules and /Data, files DragonForest.py and configData.ini to a local folder.
 2. Run DragonForest.py from the Python3 cmdline
-3. Follow prompts/explore or use in-game Help
+3. Follow prompts, explore or use in-game Help
 
 ### Goals
 * Learn to use:
@@ -18,3 +18,4 @@ I'm doing this as a project to learn Python. All ASCII art and code is by me - o
     * External files: Save and Load system, inventory
     * Data structures
     * Conditionals
+    * Unit Testing
