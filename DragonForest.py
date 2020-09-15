@@ -3,7 +3,7 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/14/2020
+# Updated 9/15/2020
 #
 # TODO
 # -Search code for TODO comments
@@ -427,8 +427,8 @@ def Blacksmith(p1):
     -= BLACKSMITH MENU =-
 
     [T]alk to Blacksmith
-    [W]eapon Purchase/Upgrade
-    [A]rmor Purchase/Upgrade
+    [W]eapon Purchase
+    [A]rmor Upgrade
 
     [L]eave Blacksmith
         ''')
@@ -438,11 +438,61 @@ def Blacksmith(p1):
         if action == 'T':
             pass
         elif action == 'W':
-            pass
+            DoAction('blacksmithWeapons', p1, None)
         elif action == 'A':
             pass
         elif action == 'L':
             return
+
+def BlacksmithWeapons(p1):
+
+    # TODO: Need to dynamically build this menu of weapons from the weapon data
+    #
+    print('Welcome to my armory wall. This is what I have for purchase. Coin only.')
+    print()
+    print('<===|- WEAPONS -|===>')
+    print()
+    
+    bsmithWeapons = []
+    
+    for weapon in p1.WeaponData['weapons']:
+        bsmithWeapons.append(weapon['name'])
+
+    # NOTE: In 3.x, / gives a float, not an int. Need // #
+    idxCol1 = 0 #index column starts at 1
+    idxCol2 = len(bsmithWeapons)//2 + 1 # index column2 starts at len(list)/2 + 1
+    weaponCount = len(bsmithWeapons)
+
+    # slice list based on even or odd num of items
+    if len(bsmithWeapons) % 2 == 0:
+        col2 = len(bsmithWeapons)//2
+    else:
+        col2 = len(bsmithWeapons)//2 # TODO: Same as line 468
+
+    # slice list into 2 columns using zip() function
+    for left,right in zip(bsmithWeapons[::1],bsmithWeapons[col2::]):
+        print('[{}] {:<12} [{}] {:<12}'.format(idxCol1,left,idxCol2,right))
+
+        # increment the column indexes manually
+        idxCol1 += 1
+        idxCol2 += 1
+
+    command = input('\nCommand: ').upper()
+
+    if command == 'L':
+        DoAction('blacksmith', p1, None)
+
+    # have to convert the command to an int to validate against range
+    elif int(command) in range(2,weaponCount):
+        
+        weaponName = bsmithWeapons[int(command)]
+        
+        # player can purchase
+        if p1.BuyWeapon(weaponName):
+            print('You purchased a {}'.format(weaponName))
+        else:
+            print('You do not have enough money.')
+        
 
 def ExploreForest(p1, enemyData):
 
@@ -517,6 +567,9 @@ def DoAction(action, playerObj, enemyData):
 
     elif action == 'townBlacksmith':
         Blacksmith(playerObj)
+
+    elif action == 'blacksmithWeapons':
+        BlacksmithWeapons(playerObj)
 
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')

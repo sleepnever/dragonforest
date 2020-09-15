@@ -126,10 +126,12 @@ class Player():
     def BuyWeapon(self, weaponName):
         """ Assigns the weapon to the Player if Player has enough Money """
 
-        #if self.Money >= self.WeaponClass.GetWeapon(weaponName)['cost']:
-        #    self.Weapon = self.WeaponClass.GetWeapon(weaponName)
-        #    self.Money -= self.Weapon['cost']
-        #    return True
+        weapon = self.GetWeapon(weaponName)
+
+        if self._money >= weapon.Cost:
+            self.Weapon = self.GetWeapon(weaponName)
+            self._money -= weapon.Cost
+            return True
         
         return False
     
