@@ -3,7 +3,7 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/15/2020
+# Updated 9/16/2020
 #
 # TODO
 # -Search code for TODO comments
@@ -12,9 +12,6 @@
 # -When player levels up, how to get Armor and new weapons?
 # -Story
 #   -Need whatever the mystery of the forest is
-# -Save Game
-#   -Save from Inn, set StayedAtInn=True
-#   -Save from Quit, set StayedAtInn=False
 # -Load game
 #   -If save file exists with username, ask to load?
 #   -If StayedAtInn=True, give a random amount of health and armor boost, else take some HP away
@@ -620,7 +617,9 @@ def DoAction(action, playerObj, enemyData):
 
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
+        playerObj.StayedAtInn = True
         SaveGame(playerObj)
+
         sys.exit()
 
     elif action == 'innDrink':
