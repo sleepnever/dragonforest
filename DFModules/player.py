@@ -21,6 +21,7 @@ class Player():
         self._money = 2
         self._lastTimeCamped = None
         self._hasDiscoveredTown = False
+        self._stayedAtInn = False
 
         self.WeaponData = weaponData
         # Instantiate Weapon into a instance var in Player
@@ -60,7 +61,6 @@ class Player():
 
         if self._health > self._maxHealth:
             self._health = self._maxHealth
-
 
     @property
     def MaxArmor(self):
@@ -112,6 +112,14 @@ class Player():
     def HasDiscoveredTown(self, value):
         self._hasDiscoveredTown = value
 
+    @property
+    def StayedAtInn(self):
+        return self._stayedAtInn
+    
+    @StayedAtInn.setter
+    def StayedAtInn(self, value):
+        self._stayedAtInn = value
+
     # ########################
     # METHODS
     # ########################
@@ -142,6 +150,16 @@ class Player():
         #    self.Weapon['damage'] += damage
         #    return True
 
+        return False
+
+    def UpgradeArmor(self, cost, upgradeAmount):
+        """ Upgrade Armor """
+        
+        if self._money >= cost:
+            self._money -= cost
+            self._armor += upgradeAmount
+            return True
+        
         return False
 
     # TODO: refactor this to a static helper for player and enemy use

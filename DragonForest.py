@@ -12,8 +12,13 @@
 # -When player levels up, how to get Armor and new weapons?
 # -Story
 #   -Need whatever the mystery of the forest is
+# -Save Game
+#   -Save from Inn, set StayedAtInn=True
+#   -Save from Quit, set StayedAtInn=False
 # -Load game
 #   -If save file exists with username, ask to load?
+#   -If StayedAtInn=True, give a random amount of health and armor boost, else take some HP away
+#    for sleeping out in the cold with the animals and bugs
 # -Artwork
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
 # -General
@@ -49,7 +54,7 @@ noCampingStrings = ['You can''t camp all day, go do something!','Such a shame yo
 MAX_TIME_BETWEEN_CAMP_MINUTES = 5
 LUCK_DRAGON_NUMBER = 13 # if the rand gen picks 13, get a prize in the forest
 CONFIG_FILE = 'configData.ini'
-GAMESAVE_FILE = 'player.ini'
+GAMESAVE_FILE = 'playerSave.ini'
 
 #
 # Functions
@@ -98,6 +103,7 @@ def LoadGame(p1):
     p1.Money = config['PLAYER']['Money']
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
     p1.HasDiscoveredTown = config['PLAYER']['HasDiscoveredTown']
+    p1.StayedAtInn = config['PLAYER']['StayedAtInn']
 
 def SaveGame(p1):
 
@@ -116,12 +122,13 @@ def SaveGame(p1):
         'Weapon':p1.Weapon.Name,
         'Money':p1.Money,
         'LastTimeCamped':p1.LastTimeCamped, # can have no value
-        'HasDiscoveredTown':p1.HasDiscoveredTown
+        'HasDiscoveredTown':p1.HasDiscoveredTown,
+        'StayedAtInn':p1.StayedAtInn # did the player stay at the inn (save game)? reset to False on load
         }
     
     # TODO: Update to use PathLib
-    with open(os.path.join(os.getcwd(),GAMESAVE_FILE),'w') as configFile:
-        config.write(configFile)
+    with open(os.path.join(os.getcwd(),GAMESAVE_FILE),'w') as saveFile:
+        config.write(saveFile)
 
 def LuckDragon(p1):
 
@@ -162,6 +169,13 @@ def IsForestEvent(p1):
         print()
         p1.Health = -10
         return True
+    
+    elif randInt == 98:
+        print('Suddenly a giant fluffy bunny with floppy ears appears on a rock in front of you.')
+        print('He blinks and out of no where says "HEY! I''m Vlad, the Magical Cookie Bunny!"')
+        print('You stand there stunned, but even more so as he hands you a giant chocolate chip cookie worth 15 HP.')
+        print()
+        p1.Health = 15
 
     return False
     # add more
@@ -171,12 +185,14 @@ def DisplayPlayerStats(p1):
     
     print()
     print('-=-=-=-=-=-=-=-=-=-STATS=-=-=-=-=-=-=-=-=-=-=-')
-    print('| Player Name     : {}'.format(p1.Name))
-    print('| Health (HP)     : {}/{}'.format(p1.Health,p1.MaxHealth))
-    print('| Armor  (AP)     : {}/{}'.format(p1.Armor,p1.MaxArmor))
-    print('| Weapon / Damage : {} / {}'.format(p1.Weapon.Name, p1.Weapon.Damage))
-    print('| Experience (XP) : {}'.format(p1.Xp))
-    print('| Coins           : {}'.format(p1.Money))
+    print('|')
+    print('| Player Name     :  {}'.format(p1.Name))
+    print('| Health (HP)     :  {}/{}'.format(p1.Health,p1.MaxHealth))
+    print('| Armor  (AP)     :  {}/{}'.format(p1.Armor,p1.MaxArmor))
+    print('| Weapon / Damage :  {} / {}'.format(p1.Weapon.Name, p1.Weapon.Damage))
+    print('| Experience (XP) :  {}'.format(p1.Xp))
+    print('| Coins           :  {}'.format(p1.Money))
+    print('|')
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
 
@@ -225,15 +241,12 @@ def Attack(p1, enemyObj):
 
             addedXp = random.randint(1, enemyObj.MaxXp)
             p1.Xp = addedXp
-            print('\n\nYou have gained {} XP'.format(addedXp))
+            print('\n\nYou have gained {} XP!'.format(addedXp))
 
             return
             
         else:
             print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.Name, p1_damageGiven, enemyObj.Health))
-
-        #TODO / BUG: I need to say something about armor took some of the hit, and return back
-        #            that final damage amount, and report it below. Otherwise 100, hit with 2, still 100
 
         # Calculate Player's Damage taken from enemy, factoring in armor
         enemy_damageGiven = p1.CalculateDamageTaken(enemy_damageGiven)
@@ -272,7 +285,7 @@ def Camp(p1):
     # Set date time camped
     p1.LastTimeCamped = datetime.datetime.now()
     
-    addedHealth = random.randint(1,10)
+    addedHealth = random.randint(3,10)
 
     # don't exceed max health when adding health
     if p1.Health < p1.MaxHealth:
@@ -288,7 +301,7 @@ def Town(p1):
     # First time coming into town, show these opening story lines
     if p1.HasDiscoveredTown == False:
         print('Climbing over the rocks and pushing the branches out of the way, you see a town.')
-        time.sleep(1)
+        time.sleep(2)
         print('As you walk towards the town, you spot an Inn and... a Blacksmith shop!')
         time.sleep(1)
         print('You look at your battle worn Stick, wanting to toss it into the bushes where it belongs, but alas you keep it.')
@@ -309,8 +322,8 @@ def Town(p1):
         print('''
     -= TOWN MENU =-
 
-    [G]o to the Inn
-    [V]isit Blacksmith
+    [I]nn
+    [B]lacksmith
     [T]alk to a Random Stranger
     
     [L]eave Town
@@ -318,10 +331,10 @@ def Town(p1):
 
         action = input('Command: ').upper()
         
-        if action == 'G':
+        if action == 'I':
             DoAction('townInn', p1, None)
 
-        elif action == 'V':
+        elif action == 'B':
             DoAction('townBlacksmith', p1, None)
 
         elif action == 'T':
@@ -336,10 +349,8 @@ def Inn(p1):
 
     print('You burst through the doors of the Inn like you own the place!')
     print()
-    time.sleep(1)
+    time.sleep(2)
     print('Nobody noticed.')
-    print()
-    time.sleep(1)
 
     isPlayerAtInn = True
     while isPlayerAtInn == True:
@@ -362,7 +373,7 @@ def Inn(p1):
                 isPlayerAtInn = False
                 DoAction('innStay', p1, None)
             else:
-                print('\n"Sorry," says the Innkeeper, "but you don''t have enough to stay.')
+                print('\n"Sorry," says the Innkeeper, "but you don''t have enough to stay."')
 
         elif action == 'O':
             DoAction('innDrink', p1, None)
@@ -394,13 +405,10 @@ def InnDrink(p1):
 def InnTownNews(p1):
     
     # TODO: Make this a lot more dynamic
-    print('"Well...", Beatris says, "here\'s what I know."')
-    
-    print('Gertrude is having some issues, so I would stay clear.')
-    print('Tybalt, the local Blacksmith, can fix your armor and weaponry.')
-    print('Meric got in a fight with Rowan, but Meric went home sore.')
-    # if player took a drink, throw in a funny line like this. Will need a flag in the player class
-    print('And I think that drink I gave you was to kill the roaches. I have your drink right here.')
+    print('WANTED: Rowan McGill wanted for stealing two of Billy Grant''s cows.')
+    print('Town Hall: Taxes will be raised 0.002% in February')
+    print('Tybalt, the local Blacksmith, is having a special on Armor.')
+    print('For Sale: 2 parcels of land for 500 coin')
 
 def Blacksmith(p1):
 
@@ -426,7 +434,6 @@ def Blacksmith(p1):
         print('''
     -= BLACKSMITH MENU =-
 
-    [T]alk to Blacksmith
     [W]eapon Purchase
     [A]rmor Upgrade
 
@@ -435,20 +442,16 @@ def Blacksmith(p1):
 
         action = input('Command: ').upper()
         
-        if action == 'T':
-            pass
-        elif action == 'W':
+        if action == 'W':
             DoAction('blacksmithWeapons', p1, None)
         elif action == 'A':
-            pass
+            DoAction('blacksmithArmorUpgrade', p1, None)
         elif action == 'L':
             return
 
 def BlacksmithWeapons(p1):
 
-    # TODO: Need to dynamically build this menu of weapons from the weapon data
-    #
-    print('Welcome to my armory wall. This is what I have for purchase. Coin only.')
+    print('Welcome to my Armory wall. This is what I have for purchase. Coin only.')
     print()
     print('<===|- WEAPONS -|===>')
     print()
@@ -492,7 +495,47 @@ def BlacksmithWeapons(p1):
             print('You purchased a {}'.format(weaponName))
         else:
             print('You do not have enough money.')
+
+def BlacksmithArmorUpgrade(p1):
+
+    print('''   
+             __________
+             |  ARMOR |
+             |        |
+              \\______/
+    ''')
+    print('Current Coin : {}'.format(p1.Money))
+    print('Current Armor: {}'.format(p1.Armor))
+
+    if p1.Armor != p1.MaxArmor:
         
+        upgradeCost = ((p1.Xp * 2) * random.randint(1,3))
+        upgradeAmount = (p1.Xp + p1.Armor)
+        
+        print('Upgrade Cost : {} coin for {} AP'.format(upgradeCost, upgradeAmount))
+
+        action = input('\nDo you want to upgrade? Y/N: ').upper()    
+
+        if action == 'Y':
+            if p1.UpgradeArmor(upgradeCost, upgradeAmount):
+                print('\n"Enjoy your upgrade and your lighter pocket!", laughs the Blacksmith.')
+            else:
+                print('"Come back when you have more money...", groans the Blacksmith.')
+                randInt = random.randint(1,50)
+                if randInt == 20:
+                    print('''
+                    <THWACK>
+                    
+                    Something hard hit you in the back of the head. Rubbing your sore spot, you
+                    look down to find a shiny coin. What the...?
+                    
+                    ''')
+                    print('"Penny for your thoughts! Get it?!", the Blacksmith says with a crude smile.')
+                    p1.Money = 1
+
+    else:
+        print('Your Armor is already at Max.')
+
 
 def ExploreForest(p1, enemyData):
 
@@ -505,13 +548,14 @@ def ExploreForest(p1, enemyData):
         p1.HasDiscoveredTown = True
         return
 
-    if IsForestEvent(p1): # random things that can help/hurt. If one occurs, exit out of the next piece back to menu
+    # random things that can help/hurt
+    if IsForestEvent(p1):
         return
 
     time.sleep(1)
     print('...listening to the sounds...')
     time.sleep(1)
-    print('and looking for anything interesting.')
+    print('and looking for anything interesting to fight..')
     print()
 
     # Random luck lottery
@@ -533,7 +577,7 @@ def ExploreForest(p1, enemyData):
         Attack(p1, enemy)
 
         # Fight is over
-        print('\nThe fight has left you with {}/{} HP'.format(p1.Health,p1.MaxHealth))
+        #print('\nThe fight has left you with {}/{} HP and {}/{} AP'.format(p1.Health,p1.MaxHealth,p1.Armor,p1.MaxArmor))
 
     else:
 
@@ -570,6 +614,9 @@ def DoAction(action, playerObj, enemyData):
 
     elif action == 'blacksmithWeapons':
         BlacksmithWeapons(playerObj)
+
+    elif action == 'blacksmithArmorUpgrade':
+        BlacksmithArmorUpgrade(playerObj)
 
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
@@ -625,7 +672,7 @@ def main():
 
         if p1.Level >= 1 and p1.HasDiscoveredTown == True:
             print('''
-    -= MENU =-
+    -= FOREST MENU =-
         
     [E]xplore the Forest           [S]tats
     [C]amp                         [H]elp
@@ -636,7 +683,7 @@ def main():
             ''')
         else:
             print('''
-    -= MENU =-
+    -= FOREST MENU =-
     
     [E]xplore the Forest         [S]tats
     [C]amp                       [H]elp
@@ -666,10 +713,11 @@ def main():
         elif command == 'Q':
             exitGame = True
 
+        # DEBUG
         elif command == 'D':
-                p1.Xp = 25
-                p1.Armor = 5
-                p1.Money = 50
+                p1.Xp = 50
+                p1.Armor = 10
+                p1.Money = 100
                 p1.HasDiscoveredTown = True
 
 if __name__ == "__main__":
