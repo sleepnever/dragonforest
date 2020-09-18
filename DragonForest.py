@@ -3,13 +3,9 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/16/2020
+# Updated 9/17/2020
 #
 # TODO
-# -Search code for TODO comments
-# -What am I doing with npc.py?
-# -Move more long story pieces into textblocks.py (?) or just remove it
-# -When player levels up, how to get Armor and new weapons?
 # -Story
 #   -Need whatever the mystery of the forest is
 # -Load game
@@ -19,7 +15,9 @@
 # -Artwork
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
 # -General
-#
+#   -Search code for TODO/HACK/BUG comments
+#   -What am I doing with npc.py?
+#   -Move more long story pieces into textblocks.py (?) or just remove it
 #----------------------------
 
 # Python Libraries
