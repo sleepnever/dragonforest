@@ -57,37 +57,27 @@ GAMESAVE_FILE = 'playerSave.ini'
 # Functions
 #
 
-def LoadWeaponsFromJson():
+def LoadDataFromJson(filepath, openMode, isOrderedDict=True):
 
     # use a Windows path
-    filename = PureWindowsPath("Data\\weapons.json")
-
-    # PathLib will convert the path correctly for the OS
-    correctPath = Path(filename)
-
-    with open(correctPath, mode="r") as json_file:
-    # object_pairs_hook=OrderedDict will load JSON data in order
-        weapons = json.load(json_file, object_pairs_hook=OrderedDict)
-
-    return weapons
-
-
-def LoadEnemiesFromJson():
-
-    # use a Windows path
-    filename = PureWindowsPath("Data\\enemies.json")
+    filename = PureWindowsPath(filepath)
 
     correctPath = Path(filename)
 
-    with open(correctPath, mode="r") as json_file:
-        enemies = json.load(json_file, object_pairs_hook=OrderedDict)
+    with open(correctPath, mode=openMode) as json_file:
+        if isOrderedDict:
+            jsonData = json.load(json_file, object_pairs_hook=OrderedDict)
+        else:
+            jsonData = json.load(json_file)
 
-    return enemies
+    return jsonData
 
 
 def LoadGame(p1):
+
+    # TODO: Update to use PathLib
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.getcwd(),GAMESAVE_FILE)) # TODO: Update to use PathLib
+    config.read(os.path.join(os.getcwd(),GAMESAVE_FILE))
 
     p1.Name = config['PLAYER']['Name']
     p1.Level = config['PLAYER']['Level']
@@ -101,6 +91,10 @@ def LoadGame(p1):
     p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
     p1.HasDiscoveredTown = config['PLAYER']['HasDiscoveredTown']
     p1.StayedAtInn = config['PLAYER']['StayedAtInn']
+    p1.Level1BonusReceived = config['PLAYER']['Level1BonusReceived']
+    p1.Level2BonusReceived = config['PLAYER']['Level2BonusReceived']
+    p1.Level3BonusReceived = config['PLAYER']['Level3BonusReceived']
+    p1.Level4BonusReceived = config['PLAYER']['Level4BonusReceived']
 
 def SaveGame(p1):
 
@@ -120,7 +114,11 @@ def SaveGame(p1):
         'Money':p1.Money,
         'LastTimeCamped':p1.LastTimeCamped, # can have no value
         'HasDiscoveredTown':p1.HasDiscoveredTown,
-        'StayedAtInn':p1.StayedAtInn # did the player stay at the inn (save game)? reset to False on load
+        'StayedAtInn':p1.StayedAtInn, # did the player stay at the inn (save game)? reset to False on load
+        'Level1BonusReceived':p1.Level1BonusReceived,
+        'Level2BonusReceived':p1.Level2BonusReceived,
+        'Level3BonusReceived':p1.Level3BonusReceived,
+        'Level4BonusReceived':p1.Level4BonusReceived
         }
     
     # TODO: Update to use PathLib
@@ -137,14 +135,16 @@ def LuckDragon(p1):
         prizeWon = random.choice(prize)
 
         if prizeWon == 'money':
-            print('It has given you 10 somewhat shiny coins.')
-            p1.Money = 10
+            print('It has given you 25, somewhat, shiny coins.')
+            p1.Money = 25
+            
         elif prizeWon == 'health':
-            print('You''ve gained 15 HP.')
-            p1.Health = 15
+            print('You''ve gained 25 HP.')
+            p1.Health = 25
+
         elif prizeWon == 'armor':
-            print('You''ve gained 10 AP.')
-            p1.Armor = 10
+            print('You''ve gained 20 AP.')
+            p1.Armor = 20
         
         print()
 
@@ -188,7 +188,7 @@ def DisplayPlayerStats(p1):
     print('| Armor  (AP)     :  {}/{}'.format(p1.Armor,p1.MaxArmor))
     print('| Weapon / Damage :  {} / {}'.format(p1.Weapon.Name, p1.Weapon.Damage))
     print('| Experience (XP) :  {}'.format(p1.Xp))
-    print('| Coins           :  {}'.format(p1.Money))
+    print('| Gold Coins      :  {}'.format(p1.Money))
     print('|')
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
@@ -414,9 +414,9 @@ def Blacksmith(p1):
     print('The Blacksmith sees you approaching, as he hammers on a shiny blade. He starts to grin.')
     time.sleep(1)
     
-    if p1.Weapon.Name == "Stick" and p1.Money < 5:
-        print('As you move closer, he sees you have nothing. Well, a stick. No armor. No ching-a-ling of coin in your pocket.')    
-        time.sleep(1)
+    if p1.Weapon.Name == "Stick":
+        print('As you move closer, he sees you have nothing. Well, a stick. No armor. Nary a ching-a-ling of coin in your pocket.')    
+        time.sleep(2)
         print('His facial expression goes soft. You stop short and wonder if you should just go find another stick.')
         print('You look down at your torn clothes (stupid raccoon), and that big scratch on your arm (crazy squirrel).')
         print()
@@ -453,40 +453,68 @@ def BlacksmithWeapons(p1):
     print('<===|- WEAPONS -|===>')
     print()
     
+    # this is the dynamic 2 column method, but it only works with even lists
+    # and it still has numbering issues, so I'm skipping for my other solution
+    # which includes damage and cost
+    '''
     bsmithWeapons = []
     
     for weapon in p1.WeaponData['weapons']:
         bsmithWeapons.append(weapon['name'])
+    
+    # Don't want the user to be able to buy their starting Weapon
+    bsmithWeapons.remove("Stick")
+
+    bsmithWeaponsCount = len(bsmithWeapons)
 
     # NOTE: In 3.x, / gives a float, not an int. Need // #
-    idxCol1 = 0 #index column starts at 1
-    idxCol2 = len(bsmithWeapons)//2 + 1 # index column2 starts at len(list)/2 + 1
-    weaponCount = len(bsmithWeapons)
+    indexCol1 = 0 # TODO: index of column 1 should start at 1
+    indexCol2 = math.ceil(bsmithWeaponsCount//2) # index column2 starts at len(list)/2 + 1
+
+    # TODO: I cannot figure out an odd numbered list properly.
+    # HACK: just use an even number of weapons in weapons.json for now
 
     # slice list based on even or odd num of items
-    if len(bsmithWeapons) % 2 == 0:
-        col2 = len(bsmithWeapons)//2
-    else:
-        col2 = len(bsmithWeapons)//2 # TODO: Same as line 468
+    #if len(bsmithWeapons) % 2 == 0:
+    #    col2 = bsmithWeaponsCount//2
+    #else:
+    #    col2 = math.ceil(bsmithWeaponsCount//2)
+
+    col2 = bsmithWeaponsCount//2
 
     # slice list into 2 columns using zip() function
     for left,right in zip(bsmithWeapons[::1],bsmithWeapons[col2::]):
-        print('[{}] {:<12} [{}] {:<12}'.format(idxCol1,left,idxCol2,right))
+        print('[{}] {:<12} [{}] {:<12}'.format(indexCol1,left,indexCol2,right))
 
         # increment the column indexes manually
-        idxCol1 += 1
-        idxCol2 += 1
+        indexCol1 += 1
+        indexCol2 += 1
+    '''
+
+    print('NAME                    DAMAGE   COST')
+    
+    weaponDict = {}
+    for idx, weapon in enumerate(p1.WeaponData['weapons']):
+        
+        # don't show the default 'stick'
+        if idx == 0:
+            continue
+
+        weaponDict[idx] = weapon['name']
+        print('[{}] {:<20} {}       {}'.format(idx, weapon['name'],weapon['damage'],weapon['cost']))
+
+    print('\n[E]xit Buy Menu')
 
     command = input('\nCommand: ').upper()
 
-    if command == 'L':
-        DoAction('blacksmith', p1, None)
+    if command == 'E':
+        pass
 
-    # have to convert the command to an int to validate against range
-    elif int(command) in range(2,weaponCount):
+    elif int(command) in range(1,len(p1.WeaponData['weapons'])):
         
-        weaponName = bsmithWeapons[int(command)]
-        
+        #weaponName = bsmithWeapons[int(command)]
+        weaponName = weaponDict.get(int(command))
+
         # player can purchase
         if p1.BuyWeapon(weaponName):
             print('You purchased a {}'.format(weaponName))
@@ -497,8 +525,8 @@ def BlacksmithArmorUpgrade(p1):
 
     print('''   
              __________
-             |  ARMOR |
-             |        |
+             |  ARMOR  |
+             |         |
               \\______/
     ''')
     print('Current Coin : {}'.format(p1.Money))
@@ -515,7 +543,7 @@ def BlacksmithArmorUpgrade(p1):
 
         if action == 'Y':
             if p1.UpgradeArmor(upgradeCost, upgradeAmount):
-                print('\n"Enjoy your upgrade and your lighter pocket!", laughs the Blacksmith.')
+                print('\n"Enjoy your armor and your lighter pocket!", laughs the Blacksmith.')
             else:
                 print('"Come back when you have more money...", groans the Blacksmith.')
                 randInt = random.randint(1,50)
@@ -573,8 +601,7 @@ def ExploreForest(p1, enemyData):
         # Call Attack
         Attack(p1, enemy)
 
-        # Fight is over
-        #print('\nThe fight has left you with {}/{} HP and {}/{} AP'.format(p1.Health,p1.MaxHealth,p1.Armor,p1.MaxArmor))
+        p1.LevelUp()
 
     else:
 
@@ -651,10 +678,10 @@ def main():
     # TODO: LoadGame() if <condition> exists. If not, ask for name and create the file
 
     # Load the weapon data
-    weaponData = LoadWeaponsFromJson()
+    weaponData = LoadDataFromJson("Data\\weapons.json", "r")
 
     # Load the enemy data
-    enemyData = LoadEnemiesFromJson()
+    enemyData = LoadDataFromJson("Data\\enemies.json", "r")
 
     # Create Player
     p1 = Player(playerName, weaponData)
@@ -666,8 +693,6 @@ def main():
     # GAME LOOP
     #
     while exitGame == False:
-
-        p1.UpdateLevel()
 
         if p1.Level >= 1 and p1.HasDiscoveredTown == True:
             print('''
@@ -691,7 +716,6 @@ def main():
             
             ''')
 
-
         command = input('Command: ').upper()
 
         if command == 'E':
@@ -714,10 +738,14 @@ def main():
 
         # DEBUG
         elif command == 'D':
-                p1.Xp = 50
-                p1.Armor = 10
-                p1.Money = 100
-                p1.HasDiscoveredTown = True
+            print('** DEBUG MODE **')
+            
+            p1.Level = int(input('Level (1-4): '))
+            p1.Xp = int(input('XP Amount: '))
+            p1.Armor = int(input('Health Amount: '))
+            p1.Armor = int(input('Armor Amount: '))
+            p1.Money = int(input('Money Amount: '))
+            p1.HasDiscoveredTown = True
 
 if __name__ == "__main__":
     main()

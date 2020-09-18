@@ -37,7 +37,7 @@ def showHelp():
 def showTownDiscovery():
 
     print('''
-    In the distance, you hear people talking and children laughing. You turn right and walk towards the noises.')
+    In the distance, you hear people talking and children laughing. You turn right and walk towards the noises.
     You stop in your tracks. A wall of thorny blackberry bushes. You take a deep breath...
     
     Oooh! Owwww! Ouch!

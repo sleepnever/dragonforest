@@ -18,7 +18,7 @@ class Player():
         self._maxArmor = self._maxArmor # rename this, add scope
         self._armor = 0
         self._xp = 0
-        self._money = 2
+        self._money = 5
         self._lastTimeCamped = None
         self._hasDiscoveredTown = False
         self._stayedAtInn = False
@@ -26,6 +26,13 @@ class Player():
         self.WeaponData = weaponData
         # Instantiate Weapon into a instance var in Player
         self.Weapon = self.GetWeapon('Stick')
+
+        # self.LevelUp gets called and resets the values for the money+armor bonus
+        # each time. So I need some kind of flag so the bonus is given but not taken.
+        self._level1BonusReceived = False
+        self._level2BonusReceived = False
+        self._level3BonusReceived = False
+        self._level4BonusReceived = False
     
     # ########################
     # PROPERTIES
@@ -120,12 +127,45 @@ class Player():
     def StayedAtInn(self, value):
         self._stayedAtInn = value
 
+    @property
+    def Level1BonusReceived(self):
+        return self._level1BonusReceived
+
+    @Level1BonusReceived.setter
+    def Level1BonusReceived(self, value):
+        self._level1BonusReceived = value
+
+    @property
+    def Level2BonusReceived(self):
+        return self._level1BonusReceived
+
+    @Level2BonusReceived.setter
+    def Level2BonusReceived(self, value):
+        self._level2BonusReceived = value
+
+    @property
+    def Level3BonusReceived(self):
+        return self._level3BonusReceived
+
+    @Level3BonusReceived.setter
+    def Level3BonusReceived(self, value):
+        self._level3BonusReceived = value
+
+    @property
+    def Level4BonusReceived(self):
+        return self._level4BonusReceived
+
+    @Level4BonusReceived.setter
+    def Level4BonusReceived(self, value):
+        self._level4BonusReceived = value
+
     # ########################
     # METHODS
     # ########################
 
     def GetWeapon(self, weaponName):
         """ Search OrderedDict of Weapons and return a Weapon object if found """
+
         for weapon in self.WeaponData['weapons']:
             if weapon['name'] == weaponName:
                 return Weapon(weapon['name'],weapon['damage'],weapon['maxDamage'],weapon['cost'])
@@ -143,9 +183,9 @@ class Player():
         
         return False
     
-    # Return bool if weapon was upgraded
     def UpgradeWeapon(self, damage):
         """ Upgrade damage on weapon, but no more than maxDamage allowed """
+
         #if damage < self.Weapon['maxDamage']:
         #    self.Weapon['damage'] += damage
         #    return True
@@ -165,10 +205,11 @@ class Player():
     # TODO: refactor this to a static helper for player and enemy use
     # Armor should take the brunt of the hit first, but health should still be affected
     def CalculateDamageTaken(self, damage):
+        """ Calculates the damage taken, with and without armor """
         #print('DEBUG: CalculateDamageTaken(self, {})'.format(damage))
 
         if self._armor == 0:
-            self._health = self._health - damage
+            self._health -= damage
             healthDamage = damage
         else:
             # Ding the armor first by a little bit
@@ -188,24 +229,53 @@ class Player():
 
         return healthDamage
 
-    def UpdateLevel(self):
+    def LevelUp(self):
+        """ Level up the Player """
 
         if self._xp < 25:
             pass
         elif self._xp >= 25 and self._xp < 50:
             self._level = 1
-            self._money += 5
+            
         elif self._xp >= 50 and self._xp < 150:
             self._level = 2
-            self._money += 10
+            
         elif self._xp >= 150 and self._xp <= 500:
             self._level = 3
-            self._money += 25
+            
         elif self._xp >= 500 and self._xp <= 750:
             self._level = 4
-            self._money += 50
+        
+        self.GiveLevelBonus()
 
-        return self._level
+    def GiveLevelBonus(self):
+        """ Level Up Bonuses """
+
+        if self._level == 1 and self._level1BonusReceived == False:
+            self._level1BonusReceived = True
+            self._money = 10
+            self._armor = 10
+            self._xp = 10
+        
+        elif self._level == 2 and self._level2BonusReceived == False:
+            self._level2BonusReceived = True
+            self._money = 15
+            self._armor = 25
+            self._xp = 20
+        
+        elif self._level == 3 and self._level3BonusReceived == False:
+            self._level3BonusReceived = True
+            self._money = 25
+            self._armor = 45
+            self._xp = 30
+
+        elif self._level == 4 and self._level4BonusReceived == True:
+            self._level4BonusReceived = True
+            self._money = 35
+            self._armor = 65
+            self._xp = 40
 
     def IsDead(self):
+        """ Check to see if the Player is Dead """
+
         return True if (self._health <= 0) else False
