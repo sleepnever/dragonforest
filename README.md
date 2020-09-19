@@ -18,4 +18,4 @@ I'm doing this as a project to learn Python. All ASCII art and code is by me - o
     * External files: Save and Load system, inventory
     * Data structures
     * Conditionals
-    * Unit Testing
+    * Unit Testing (pytest)
