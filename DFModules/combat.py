@@ -10,7 +10,7 @@ def Attack(p1, enemyObj):
 
     while p1.IsDead() == False and enemyObj.IsDead() == False:
         print()
-        print('You swing your {} at the {}'.format(p1.Weapon.Name, enemyObj.Name))
+        print(f'You swing your {p1.Weapon.Name} at the {enemyObj.Name}')
 
         # Get random damage range values from 0 to upper values
         p1_damageGiven = random.randint(0, p1.Weapon.Damage) # how much player deals
@@ -22,24 +22,24 @@ def Attack(p1, enemyObj):
 
         # Check if player or enemy is dead
         if (enemyObj.IsDead()):
-            print('You hit the {} for {} damage, and killed it!'.format(enemyObj.Name, p1_damageGiven))
+            print(f'You hit the {enemyObj.Name} for {p1_damageGiven} damage, and killed it!')
 
             addedXp = random.randint(1, enemyObj.MaxXp)
             p1.Xp = addedXp
-            print('\n\nYou have gained {} XP!'.format(addedXp))
+            print(f'\n\nYou have gained {addedXp} XP!')
 
             return
             
         else:
-            print('You hit the {} for {} damage! It has {} HP.'.format(enemyObj.Name, p1_damageGiven, enemyObj.Health))
+            print(f'You hit the {enemyObj.Name} for {p1_damageGiven} damage! It has {enemyObj.Health} HP.')
 
         # Calculate Player's Damage taken from enemy, factoring in armor
         enemy_damageGiven = p1.CalculateDamageTaken(enemy_damageGiven)
 
         if (p1.IsDead()):
-            print('{} is hit with {} damage and has died! <<GAME OVER>>'.format(p1.Name, enemy_damageGiven))
+            print(f'{p1.Name} is hit with {enemy_damageGiven} damage and has died! <<GAME OVER>>')
             sys.exit()
         else:
-            print('You are hit with {} damage and have {} HP left.'.format(enemy_damageGiven, p1.Health))
+            print(f'You are hit with {enemy_damageGiven} damage and have {p1.Health} HP left.')
 
         time.sleep(1)

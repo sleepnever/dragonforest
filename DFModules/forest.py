@@ -56,8 +56,8 @@ def ExploreForest(p1, enemyData):
     # Create enemy based on Player's level
     enemy = Enemy.CreateEnemyByPlayerLevel(p1.Level, enemyData)
 
-    print('A {} {} with {} HP and {} Damage jumps out!'.format(random.choice(enemyAdjectives),enemy.Name, enemy.Health, enemy.Damage))
-    print('You grip your {}, with it''s {} Damage.'.format(p1.Weapon.Name, p1.Weapon.Damage))
+    print(f'A {random.choice(enemyAdjectives)} {enemy.Name} with {enemy.Health} HP and {enemy.Damage} Damage jumps out!')
+    print(f'You grip your {p1.Weapon.Name}, with it\'s {p1.Weapon.Damage} Damage.')
 
     print()
     action = input('Do you want to attack? Y/N: ').upper()
@@ -161,6 +161,6 @@ def Camp(p1):
     # don't exceed max health when adding health
     if p1.Health < p1.MaxHealth:
         p1.Health = addedHealth
-        print('<Yawwwwn> you lazily wake up, feeling much better. +{} HP gained.'.format(addedHealth))
+        print(f'<Yawwwwn> you lazily wake up, feeling much better. +{addedHealth} HP gained.')
     else:
         print('<Yawwwwn> you lazily wake up, feeling about the same, but it was a good nap.')

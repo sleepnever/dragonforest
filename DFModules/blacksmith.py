@@ -56,44 +56,6 @@ def BlacksmithWeapons(p1):
     print('<===|- WEAPONS -|===>')
     print()
     
-    # this is the dynamic 2 column method, but it only works with even lists
-    # and it still has numbering issues, so I'm skipping for my other solution
-    # which includes damage and cost
-    '''
-    bsmithWeapons = []
-    
-    for weapon in p1.WeaponData['weapons']:
-        bsmithWeapons.append(weapon['name'])
-    
-    # Don't want the user to be able to buy their starting Weapon
-    bsmithWeapons.remove("Stick")
-
-    bsmithWeaponsCount = len(bsmithWeapons)
-
-    # NOTE: In 3.x, / gives a float, not an int. Need // #
-    indexCol1 = 0 # TODO: index of column 1 should start at 1
-    indexCol2 = math.ceil(bsmithWeaponsCount//2) # index column2 starts at len(list)/2 + 1
-
-    # TODO: I cannot figure out an odd numbered list properly.
-    # HACK: just use an even number of weapons in weapons.json for now
-
-    # slice list based on even or odd num of items
-    #if len(bsmithWeapons) % 2 == 0:
-    #    col2 = bsmithWeaponsCount//2
-    #else:
-    #    col2 = math.ceil(bsmithWeaponsCount//2)
-
-    col2 = bsmithWeaponsCount//2
-
-    # slice list into 2 columns using zip() function
-    for left,right in zip(bsmithWeapons[::1],bsmithWeapons[col2::]):
-        print('[{}] {:<12} [{}] {:<12}'.format(indexCol1,left,indexCol2,right))
-
-        # increment the column indexes manually
-        indexCol1 += 1
-        indexCol2 += 1
-    '''
-
     print('NAME                    DAMAGE   COST')
     
     weaponDict = {}
@@ -104,7 +66,7 @@ def BlacksmithWeapons(p1):
             continue
 
         weaponDict[idx] = weapon['name']
-        print('[{}] {:<20} {}       {}'.format(idx, weapon['name'],weapon['damage'],weapon['cost']))
+        print(f'[{idx}] {weapon["name"]:<20} {weapon["damage"]}       {weapon["cost"]}')
 
     print('\n[E]xit Buy Menu')
 
@@ -120,7 +82,7 @@ def BlacksmithWeapons(p1):
 
         # player can purchase
         if p1.BuyWeapon(weaponName):
-            print('You purchased a {}'.format(weaponName))
+            print(f'You purchased a {weaponName}')
         else:
             print('You do not have enough money.')
 
@@ -132,15 +94,15 @@ def BlacksmithArmorUpgrade(p1):
              |         |
               \\______/
     ''')
-    print('Current Coin : {}'.format(p1.Money))
-    print('Current Armor: {}'.format(p1.Armor))
+    print(f'Current Coin : {p1.Money}')
+    print(f'Current Armor: {p1.Armor}')
 
     if p1.Armor != p1.MaxArmor:
         
         upgradeCost = ((p1.Xp * 2) * random.randint(1,3))
         upgradeAmount = (p1.Xp + p1.Armor)
         
-        print('Upgrade Cost : {} coin for {} AP'.format(upgradeCost, upgradeAmount))
+        print(f'Upgrade Cost : {upgradeCost} coin for {upgradeAmount} AP')
 
         action = input('\nDo you want to upgrade? Y/N: ').upper()    
 

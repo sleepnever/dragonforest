@@ -71,13 +71,13 @@ def InnDrink(p1):
     p1.Health = negativeHealthAmount
 
     print('The room starts to spin. What\'s in thi..s?')
-    print('You have lost {} HP. It was worth it though!'.format(abs(negativeHealthAmount)))
+    print(f'You have lost {abs(negativeHealthAmount)} HP. It was worth it though!')
     print('Taking another sip, you are now filled with a little more courage!')
     print()
 
     positiveArmorAmount = random.randint(1,4)
     p1.Armor = positiveArmorAmount
-    print('You have gained {} AP !'.format(positiveArmorAmount))
+    print(f'You have gained {positiveArmorAmount} AP !')
 
 def InnTownNews(p1):
     
