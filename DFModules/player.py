@@ -1,6 +1,7 @@
 import math
 import random
 
+# Game Modules
 from DFModules.weapon import Weapon
 
 class Player():

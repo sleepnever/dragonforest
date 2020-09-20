@@ -1,3 +1,4 @@
+import random
 
 class Enemy():
     """ Enemy """
@@ -65,6 +66,26 @@ class Enemy():
     # ########################
     # METHODS
     # ########################
+
+    # BUG: TypeError: GetEnemyByPlayerLevel() missing 1 required positional argument: 'enemyData'
+    # FIX: Change to @staticmethod, because when this is called, an enemy instance hasn't been created
+    #      yet, so self doesn't apply. The method gets a random enemy from the JSON data and returns
+    #      an Enemy object with the attributes to the caller
+    @staticmethod
+    def CreateEnemyByPlayerLevel(playerLevel, enemyData):
+
+        playerLevelEnemyList = []
+
+        # search through the JSON data to find Enemies that are <= level of the Player
+        for enemy in enemyData['enemies']:
+            if enemy['level'] <= playerLevel:
+                playerLevelEnemyList.append(enemy)
+        
+        # From the list, randomly choose an enemy object
+        randomEnemyObj = random.choice(list(playerLevelEnemyList))
+        
+        return Enemy(randomEnemyObj)
+
 
     def IsDead(self):
         return True if (self._health <= 0) else False
