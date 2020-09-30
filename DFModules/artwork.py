@@ -14,7 +14,7 @@ def showTitle():
 def showDead():
     print('''
 
-    -= DEAD =-
+    -= YOU ARE DEAD =-
 
     ''')
 
@@ -78,4 +78,31 @@ def showDragonCave():
      ###      ###
      ###       ####
     -------------------
+    ''')
+
+def InnGamblePinfinger():
+    print('''
+        [ ]
+       _[_]_
+        | |
+        | |
+        \\/
+     (_)(_)(_)O   
+    ''')
+
+def InnGambleNumberGuess():
+    print('''
+    
+    ## Guess the Number ##
+    
+    ''')
+
+def InnGambleHighPoints():
+    print('''
+      ________     _______
+     /_______/|   /______/|
+     | X  X | |  | X    | |
+     |      | |  |   X  | |
+     |_X__X_|/   |_____X|/
+
     ''')

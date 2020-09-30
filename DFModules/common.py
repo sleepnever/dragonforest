@@ -42,6 +42,9 @@ def DoAction(action, playerObj, enemyData):
     elif action == 'blacksmithArmorUpgrade':
         blacksmith.BlacksmithArmorUpgrade(playerObj)
 
+    elif action == 'innGamble':
+        inn.InnGamble(playerObj)
+
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
         playerObj.StayedAtInn = True

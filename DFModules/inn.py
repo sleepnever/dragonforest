@@ -4,6 +4,7 @@ import time
 # Game Modules
 from DFModules import artwork
 from DFModules import common
+from DFModules import minigames
 
 #
 # Functions related to the Inn
@@ -35,8 +36,9 @@ def Inn(p1):
         print('''
     -= INN MENU =-
 
-    [G]et a Room
+    [G]amble
     [O]rder a Drink
+    [S]tay the Night
     [R]ead the Town News
 
     [L]eave the Inn        
@@ -45,6 +47,9 @@ def Inn(p1):
         action = input('Command: ').upper()
         
         if action == 'G':
+            common.DoAction('innGamble', p1, None)
+
+        elif action == 'S':
             # Can player afford to stay?
             if PlayerCanStayAtInn(p1):
                 isPlayerAtInn = False
@@ -86,3 +91,32 @@ def InnTownNews(p1):
     print('Town Hall: Taxes will be raised 0.002% in February')
     print('Tybalt, the local Blacksmith, is having a special on Armor.')
     print('For Sale: 2 parcels of land for 500 coin')
+
+# TODO: Refactor
+def InnGamble(p1):
+    
+    # Thimblerig = ball and cup
+    # Passe-dix: dice game
+    # Highest Points: dice game (2 player), roll and highest num wins
+    # Pinfinger: knife game with fingers
+    # Guess a number
+    gameList = ['Thimblerig','Passe-dix', 'Highest Points', 'Pinfinger', 'Guess the Number']
+    game = random.choice(gameList)
+
+    print('You hear some shouting in the far corner of the room, "DOUBLE OR NOTHING!", and decide to check it out.')
+    print(f'You walk up to a group of men playing "{game}" and a large pile of coins in the middle of the table.')
+    print('"Hey fella", says one of the men standing around the table, "you interested in a bit of a gamble?"')
+
+    action = input('Command (Y/N): ').upper()
+
+    if action == 'Y':
+        actionWager = int(input('"Great! What\'s yer wager?: ').upper())
+
+        if actionWager <= p1.Money:
+            print(f'You toss {actionWager} coins on to the table and have a seat.')
+            minigames.Pinfinger(p1, game, actionWager)
+        else:
+            print(f'You can\'t wager {actionWager} when you only have {p1.Money}')
+    
+    else:
+        print('Come back anytime!')
