@@ -106,3 +106,38 @@ def InnGambleHighPoints():
      |_X__X_|/   |_____X|/
 
     ''')
+
+
+def InnGambleThimblerigA():
+    print('''
+     ____     ____     ____
+    /    \\  /    \\  /    \\
+    |____|   |____|   |____|
+    
+      ( )
+    ''')
+
+def InnGambleThimblerigB():
+    print('''
+     ____     ____     ____
+    /    \\  /    \\  /    \\
+    |____|   |____|   |____|
+    
+              ( )
+    ''')
+
+def InnGambleThimblerigC():
+    print('''
+     ____     ____     ____
+    /    \\  /    \\  /    \\
+    |____|   |____|   |____|
+    
+                        ( )
+    ''')
+
+def InnGambleThimblerigEnd():
+    print('''
+     ____     ____     ____
+    /    \\  /    \\  /    \\
+    |____|   |____|   |____|
+    ''')

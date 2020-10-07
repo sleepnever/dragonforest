@@ -86,26 +86,25 @@ def InnDrink(p1):
 
 def InnTownNews(p1):
     
-    # TODO: Make this a lot more dynamic
+    print('------------------------------------------------------------------------')
+    print()
     print('WANTED: Rowan McGill wanted for stealing two of Billy Grant''s cows.')
     print('Town Hall: Taxes will be raised 0.002% in February')
     print('Tybalt, the local Blacksmith, is having a special on Armor.')
     print('For Sale: 2 parcels of land for 500 coin')
+    print()
+    print('------------------------------------------------------------------------')
 
-# TODO: Refactor
+
 def InnGamble(p1):
     
-    # Thimblerig = ball and cup
-    # Passe-dix: dice game
-    # Highest Points: dice game (2 player), roll and highest num wins
-    # Pinfinger: knife game with fingers
-    # Guess a number
-    gameList = ['Thimblerig','Passe-dix', 'Highest Points', 'Pinfinger', 'Guess the Number']
+    gameList = ['Thimblerig', 'Pinfinger', 'Guess the Number']
+    time.sleep(1)
     game = random.choice(gameList)
 
     print('You hear some shouting in the far corner of the room, "DOUBLE OR NOTHING!", and decide to check it out.')
     print(f'You walk up to a group of men playing "{game}" and a large pile of coins in the middle of the table.')
-    print('"Hey fella", says one of the men standing around the table, "you interested in a bit of a gamble?"')
+    print('"Hey fella", says one of the men standing around the table, ", you interested in a bit of a gamble?"')
 
     action = input('Command (Y/N): ').upper()
 
@@ -113,8 +112,10 @@ def InnGamble(p1):
         actionWager = int(input('"Great! What\'s yer wager?: ').upper())
 
         if actionWager <= p1.Money:
-            print(f'You toss {actionWager} coins on to the table and have a seat.')
-            minigames.Pinfinger(p1, game, actionWager)
+            print(f'You toss {actionWager} coins on to the table and have a seat The other\'s toss in a few as well.')
+            npcWagerAmount = random.randint(2,15)
+
+            minigames.SelectGame(p1, game, actionWager, npcWagerAmount)
         else:
             print(f'You can\'t wager {actionWager} when you only have {p1.Money}')
     

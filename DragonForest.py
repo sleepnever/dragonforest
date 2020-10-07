@@ -3,7 +3,7 @@
 # Text adventure game
 # by Rob Watts
 # Python 3.7.3
-# Updated 9/20/2020
+# Updated 10/6/2020
 #
 # TODO
 # -Story
@@ -47,33 +47,65 @@ def main():
     exitGame = False
 
     artwork.showTitle()
-    
+
     print('''
-    You arrive at Dragon Forest. You stare at the trees
-    that have been torched by fire, next to others with wiry branches
-    that reach high covered in large leaves. You hear screeches off in
-    the distance and the flapping of wings.
 
-    Thoughts of turning back fill your head, but the mystery of Dragon Forest
-    brings you closer. 
+    [N]ew Game
+    [L]oad Game
 
+    [Q]uit
     ''')
 
-    playerName = input('What is thy name? ')
+    action = input('Command: ').upper()
 
-    if playerName == '' or len(playerName) < 1:
-        sys.exit()
+    isNewGame = False
 
-    # TODO: LoadGame() if <condition> exists. If not, ask for name and create the file
+    if action == 'N':
+        isNewGame = True
+    elif action == 'L':
+        # Attempt to Load Game
+        saves = list(dataHelper.GetGameSaves())
+        if len(saves) != 0:
+            print('------- SAVED GAMES -----------')
+            print()
+            for idx, save in enumerate(saves):
+                print(f"[{idx}] {save.split('_')[0]}")
+            
+            loadAnswer = int(input('Save Slot Number: '))
 
-    # Load the weapon data
-    weaponData = dataHelper.LoadDataFromJson("Data\\weapons.json", "r")
+            if loadAnswer > -1 and loadAnswer <= len(saves):
+                p1 = dataHelper.LoadGame(saves[loadAnswer])
+        else:
+            print('No save games found.')
+            isNewGame = True
 
-    # Load the enemy data
-    enemyData = dataHelper.LoadDataFromJson("Data\\enemies.json", "r")
 
-    # Create Player
-    p1 = Player(playerName, weaponData)
+
+    if isNewGame == True:
+        print('''
+        You arrive at Dragon Forest. You stare at the trees
+        that have been torched by fire, next to others with wiry branches
+        that reach high covered in large leaves. You hear screeches off in
+        the distance and the flapping of wings.
+
+        Thoughts of turning back fill your head, but the mystery of Dragon Forest
+        brings you closer. 
+
+        ''')
+
+        playerName = input('What is thy name? ')
+
+        if playerName == '' or len(playerName) < 1:
+            sys.exit()
+
+        # Load the weapon data
+        weaponData = dataHelper.LoadDataFromJson("Data\\weapons.json", "r")
+
+        # Load the enemy data
+        enemyData = dataHelper.LoadDataFromJson("Data\\enemies.json", "r")
+
+        # Create Player
+        p1 = Player(playerName, weaponData)
 
     # Display Stats
     common.DisplayPlayerStats(p1)

@@ -7,8 +7,50 @@ from DFModules import artwork
 # Minigames 
 #
 
-# TODO: Refactor
-def Pinfinger(p1, game, wager):
+# Thimblerig = ball and cup
+# Pinfinger: knife game with fingers
+# Guess a number
+
+def SelectGame(p1, game, wager, npcWager):
+
+    if game.lower() == "thimblerig":
+        Thimblerig(p1, wager, npcWager)
+
+    if game.lower() == "pinfinger":
+        Pinfinger(p1, wager, npcWager)
+    
+    if game.lower() == "guess the number":
+        GuessTheNumber(p1, wager, npcWager)
+
+def Thimblerig(p1, wager, npcWager):
+
+    artwork.InnGambleThimblerigB()
+
+    print(f'You have to be fast for this game. Keep your eye on the cup with the ball.')
+
+    randomCupFuncList = [artwork.InnGambleThimblerigA, artwork.InnGambleThimblerigB, artwork.InnGambleThimblerigC]
+    randCup = random.choice(randomCupFuncList)
+
+    artwork.InnGambleThimblerigEnd()
+
+    guess = input("Which cup? A, B or C: ")
+
+    randCup()
+
+    # DEBUG
+    #foo = randCup.__name__[-1]
+    #print(f'Guess = {guess} and answer = {foo}')
+
+    # match guess letter to function end letter
+    if guess.upper() == randCup.__name__[-1]:
+        print('You Win!')
+    else:
+        print('You Lose!')
+
+def Passedix(p1, wager, npcWager):
+    pass
+
+def Pinfinger(p1, wager, npcWager):
 
     artwork.InnGamblePinfinger()
 
@@ -30,8 +72,8 @@ def Pinfinger(p1, game, wager):
 
     isFingerHit = False
 
-    if __debug__:
-        print(f'DEBUG: Speed={speed}, {hitNumFingers} == {hitNumChance}')
+    #if __debug__:
+    #    print(f'DEBUG: Speed={speed}, {hitNumFingers} == {hitNumChance}')
 
     for _ in range(1,10):
         print(" <tik> ", end='')
@@ -53,14 +95,21 @@ def Pinfinger(p1, game, wager):
 
         print(f'The group looks at you in amazement. You give a wide smile, grab your winnings of {wager} coin and head out.')
     
-    # This should be a random event, and random pot money number
-    #print('As you get up and start to walk away, you hear "Double or nothing. And I\'ll even throw in my pot of {}.')
 
-def Passedix():
-    pass
+def GuessTheNumber(p1, wager, npcWager):
+    
+    num = random.randint(1,50)
+    theNum = random.randint(2,49)
 
-def HighPoints():
-    pass
+    print(f'Guess between 1 and {num}...')
 
-def GuessTheNumber():
-    pass
+    guess = int(input('"Your Guess: '))
+
+    if guess == theNum:
+        print(f'"Arrrgh. You\'ve guessed it!", groans the man. "Here take yer winnings."')
+        print()
+        print(f'You take your {wager} coins and the extra {npcWager} wagered by the others.')
+        p1.Money = npcWager
+    else:
+        print(f'"Ohhh soooo close! Well, not really.", says the man.')
+        p1.Money = -1 * (wager + npcWager)

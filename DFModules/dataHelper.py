@@ -1,11 +1,17 @@
 
 import os
+from os import listdir
 import configparser
 import json
+import datetime
 from collections import OrderedDict
 from pathlib import Path, PureWindowsPath
+from DFModules.player import Player
 
-GAMESAVE_FILE = 'playerSave.ini'
+GAMESAVE_BASEFILE = '_playerSave.ini'
+
+def GetFilesFromDir(directory, extension):
+    return (f for f in listdir(directory) if f.endswith('.' + extension))
 
 def LoadDataFromJson(filepath, openMode, isOrderedDict=True):
 
@@ -22,23 +28,28 @@ def LoadDataFromJson(filepath, openMode, isOrderedDict=True):
 
     return jsonData
 
+def GetGameSaves():
+    
+    return GetFilesFromDir(os.getcwd(), 'ini')
 
-def LoadGame(p1):
 
-    # TODO: Update to use PathLib
+def LoadGame(playerSaveFile):
+
+    weaponData = LoadDataFromJson("Data\\weapons.json", "r")
+    
     config = configparser.ConfigParser()
-    config.read(os.path.join(os.getcwd(),GAMESAVE_FILE))
+    config.read(os.path.join(os.getcwd(),playerSaveFile))
+
+    p1 = Player('temp', weaponData)
 
     p1.Name = config['PLAYER']['Name']
-    p1.Level = config['PLAYER']['Level']
-    p1.MaxHealth = config['PLAYER']['MaxHealth']
-    p1.Health = config['PLAYER']['Health']
-    p1.MaxArmor = config['PLAYER']['MaxArmor']
-    p1.Armor = config['PLAYER']['Armor']
-    p1.Xp = config['PLAYER']['Xp']
+    p1.Level = int(config['PLAYER']['Level'])
+    p1.Health = int(config['PLAYER']['Health'])
+    p1.Armor = int(config['PLAYER']['Armor'])
+    p1.Xp = int(config['PLAYER']['Xp'])
     p1.Weapon.Name = config['PLAYER']['Weapon']
-    p1.Money = config['PLAYER']['Money']
-    p1.LastTimeCamped = config['PLAYER']['LastTimeCamped']
+    p1.Money = int(config['PLAYER']['Money'])
+    p1.LastTimeCamped = datetime.datetime.strptime(config['PLAYER']['LastTimeCamped'], "%Y-%m-%d %H:%M:%S.%f") # 2020-10-06 22:37:50.819024
     p1.HasDiscoveredTown = config['PLAYER']['HasDiscoveredTown']
     p1.StayedAtInn = config['PLAYER']['StayedAtInn']
     p1.Level1BonusReceived = config['PLAYER']['Level1BonusReceived']
@@ -46,11 +57,16 @@ def LoadGame(p1):
     p1.Level3BonusReceived = config['PLAYER']['Level3BonusReceived']
     p1.Level4BonusReceived = config['PLAYER']['Level4BonusReceived']
 
+    return p1
+
 def SaveGame(p1):
 
     print('< Saving Game >')
-    # allow_no_value bug: https://github.com/ralphbean/bugwarrior/pull/600
-    config = configparser.ConfigParser(allow_no_value=True)
+    
+    config = configparser.ConfigParser()
+    
+    # Must set a lastTimeCamped, cannot be None. Won't matter by next LoadGame
+    p1.LastTimeCamped = datetime.datetime.now() - datetime.timedelta(minutes=10)
 
     config['PLAYER'] = {
         'Name':p1.Name,
@@ -72,5 +88,6 @@ def SaveGame(p1):
         }
     
     # TODO: Update to use PathLib
-    with open(os.path.join(os.getcwd(),GAMESAVE_FILE),'w') as saveFile:
+    playerSaveFile = p1.Name + GAMESAVE_BASEFILE
+    with open(os.path.join(os.getcwd(),playerSaveFile),'w') as saveFile:
         config.write(saveFile)
