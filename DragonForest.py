@@ -1,23 +1,18 @@
 #----------------------------
-# Dragon Forest
-# Text adventure game
-# by Rob Watts
-# Python 3.7.3
-# Updated 10/6/2020
+# Title:        Dragon Forest
+# Description:  Text adventure game
+# Author:       Rob Watts
+# Min Python:   3.7
+# Updated:      10/8/2020
 #
 # TODO
 # -Story
 #   -Need whatever the mystery of the forest is
-# -Load game
-#   -If save file exists with username, ask to load?
-#   -If StayedAtInn=True, give a random amount of health and armor boost, else take some HP away
-#    for sleeping out in the cold with the animals and bugs
 # -Artwork
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
 # -General
 #   -Search code for TODO/HACK/BUG comments
 #   -What am I doing with npc.py?
-#   -Move more long story pieces into textblocks.py (?) or just remove it
 #----------------------------
 
 # Python Libraries
@@ -46,6 +41,13 @@ def main():
 
     exitGame = False
 
+    # Load the weapon data
+    weaponData = dataHelper.LoadDataFromJson("Data\\weapons.json", "r")
+
+    # Load the enemy data
+    enemyData = dataHelper.LoadDataFromJson("Data\\enemies.json", "r")
+
+
     artwork.showTitle()
 
     print('''
@@ -62,9 +64,12 @@ def main():
 
     if action == 'N':
         isNewGame = True
+
     elif action == 'L':
+        
         # Attempt to Load Game
         saves = list(dataHelper.GetGameSaves())
+        
         if len(saves) != 0:
             print('------- SAVED GAMES -----------')
             print()
@@ -75,12 +80,20 @@ def main():
 
             if loadAnswer > -1 and loadAnswer <= len(saves):
                 p1 = dataHelper.LoadGame(saves[loadAnswer])
+
+                if p1.StayedAtInn == True:
+                    loudNoisesList = ['screeching','yelling','crying','pounding on the wall']
+                    noise = random.choice(loudNoisesList)
+                    print(f'\nThat was a restful sleep, except for the {noise}. You\'ve gained 10 HP')
+                    p1.Health = 10
+                else:
+                    print('\nThe ground was hard and cold. You might have ants in your pants. You\'ve lost 5 HP')
+                    p1.Health = -5
         else:
             print('No save games found.')
             isNewGame = True
 
-
-
+    # New Game
     if isNewGame == True:
         print('''
         You arrive at Dragon Forest. You stare at the trees
@@ -90,22 +103,17 @@ def main():
 
         Thoughts of turning back fill your head, but the mystery of Dragon Forest
         brings you closer. 
-
         ''')
 
+        # Get Player Name
         playerName = input('What is thy name? ')
 
         if playerName == '' or len(playerName) < 1:
             sys.exit()
 
-        # Load the weapon data
-        weaponData = dataHelper.LoadDataFromJson("Data\\weapons.json", "r")
-
-        # Load the enemy data
-        enemyData = dataHelper.LoadDataFromJson("Data\\enemies.json", "r")
-
         # Create Player
         p1 = Player(playerName, weaponData)
+        p1.SetDefaultValues()
 
     # Display Stats
     common.DisplayPlayerStats(p1)
@@ -135,7 +143,7 @@ def main():
 
     [Q]uit.
             
-            ''')
+    ''')
 
         command = input('Command: ').upper()
 
@@ -156,6 +164,8 @@ def main():
 
         elif command == 'Q':
             exitGame = True
+            print('You walk around and find a big log. You\'re not sure what lives in there. And it smells.')
+            dataHelper.SaveGame(p1)
 
         # DEBUG
         elif command == 'D':

@@ -20,7 +20,7 @@ class Player():
         self._maxArmor = self._maxArmor # rename this, add scope
         self._armor = 0
         self._xp = 0
-        self._money = 5
+        self._money = 0
         self._lastTimeCamped = None
         self._hasDiscoveredTown = False
         self._stayedAtInn = False
@@ -139,7 +139,7 @@ class Player():
 
     @property
     def Level2BonusReceived(self):
-        return self._level1BonusReceived
+        return self._level2BonusReceived
 
     @Level2BonusReceived.setter
     def Level2BonusReceived(self, value):
@@ -164,6 +164,11 @@ class Player():
     # ########################
     # METHODS
     # ########################
+
+    # After new player is created, set default values
+    def SetDefaultValues(self):
+        self.Money = 10
+
 
     def GetWeapon(self, weaponName):
         """ Search OrderedDict of Weapons and return a Weapon object if found """
