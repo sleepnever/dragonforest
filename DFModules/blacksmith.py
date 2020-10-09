@@ -44,8 +44,13 @@ def Blacksmith(p1):
         
         if action == 'W':
             common.DoAction('blacksmithWeapons', p1, None)
+
         elif action == 'A':
             common.DoAction('blacksmithArmorUpgrade', p1, None)
+
+        elif action == "GUINEVERE":
+            common.DoAction('blacksmithSpecialAction', p1, None)
+
         elif action == 'L':
             return
 
@@ -125,3 +130,29 @@ def BlacksmithArmorUpgrade(p1):
 
     else:
         print('Your Armor is already at Max.')
+
+def BlacksmithSpecial(p1):
+    
+    if p1.BlacksmithSpecialReceived == False:
+        print('''
+        The Blacksmith gives you a wide grin, which quickly turns to a scowl. He steps forward and grabs
+        your tunic with his dirty hand and asks "What did she tell you?!"
+
+        "Sh..she told me you were the best Blacksmith the land has seen!", you exclaim, hoping that is the
+        answer he is looking for and doesn't pummel you.
+
+        He releases your tunic and starts to laugh, muttering something under his breath. "That's right. I
+        am."
+        ''')
+        if p1.Armor == 0:
+            print('\t"Here, take this." he says, handing you a shiny set of armor worth 75 AP.')
+            p1.Armor = 75
+
+        elif p1.Armor >= 1:
+            print('\t"Here, let me fix up that armor for you." he says. +20 AP gained.')
+            p1.Armor = 20
+
+        p1.BlacksmithSpecialReceived = True
+        
+    else:
+        print('You quit talking to that woman you hear me? She\'s nothing but trouble, for both of us.')

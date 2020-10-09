@@ -3,16 +3,17 @@
 # Description:  Text adventure game
 # Author:       Rob Watts
 # Min Python:   3.7
-# Updated:      10/8/2020
+# Updated:      10/9/2020
 #
 # TODO
-# -Story
-#   -Need whatever the mystery of the forest is
-# -Artwork
-#   -Some art with \ are spaced incorrectly on the line, like showForest()
 # -General
 #   -Search code for TODO/HACK/BUG comments
-#   -What am I doing with npc.py?
+# -BUG
+#   - ** When you level up, the Player Level Bonus resets the XP to 10 **
+#   -Cannot exit the Load Game menu if you don't see anything there that is yours
+#   -Any single quotes escaped by the \ in a (''' x ''') block have the ' missing
+#   -Some art with \ are spaced incorrectly on the line, like showForest()
+#   -Put dynamic data (json filepaths, etc) into /Data/configData.ini
 #----------------------------
 
 # Python Libraries
@@ -93,16 +94,19 @@ def main():
             print('No save games found.')
             isNewGame = True
 
+    elif action == 'Q':
+        sys.exit()
+
     # New Game
     if isNewGame == True:
         print('''
-        You arrive at Dragon Forest. You stare at the trees
-        that have been torched by fire, next to others with wiry branches
-        that reach high covered in large leaves. You hear screeches off in
-        the distance and the flapping of wings.
+        You arrive at Dragon Forest. You stare at the trees that have been 
+        torched by fire, next to others with wiry branches that reach high 
+        covered in large leaves. You hear screeches off in the distance and 
+        the flapping of wings.
 
-        Thoughts of turning back fill your head, but the mystery of Dragon Forest
-        brings you closer. 
+        You have thoughts of turning back, but the stories of Dragon Forest
+        push you forward. 
         ''')
 
         # Get Player Name
@@ -134,6 +138,18 @@ def main():
     [Q]uit.
             
             ''')
+        elif p1.Level >= 3:
+            print('''
+    -= FOREST MENU =-
+        
+    [E]xplore the Forest           [S]tats
+    [C]amp                         [H]elp
+    [T]own
+    [D]ragon Cave
+
+    [Q]uit.
+            
+            ''')            
         else:
             print('''
     -= FOREST MENU =-
@@ -162,13 +178,16 @@ def main():
         elif command == 'T' and p1.HasDiscoveredTown:
             common.DoAction('town', p1, None)
 
+        elif command == 'D':
+            command.DoAction('dragoncave', p1, enemyData)
+
         elif command == 'Q':
             exitGame = True
             print('You walk around and find a big log. You\'re not sure what lives in there. And it smells.')
             dataHelper.SaveGame(p1)
 
         # DEBUG
-        elif command == 'D':
+        elif command == "DD":
             print('** DEBUG MODE **')
             
             p1.Level = int(input('Level (1-4): '))

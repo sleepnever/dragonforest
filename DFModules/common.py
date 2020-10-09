@@ -6,6 +6,7 @@ from DFModules import blacksmith
 from DFModules import forest
 from DFModules import inn
 from DFModules import town
+from DFModules import dragon
 from DFModules import dataHelper
 
 #
@@ -33,6 +34,9 @@ def DoAction(action, playerObj, enemyData):
     elif action == 'townInn':
         inn.Inn(playerObj)
 
+    elif action == 'townTalkToNpc':
+        town.TalkTownNpc()
+
     elif action == 'townBlacksmith':
         blacksmith.Blacksmith(playerObj)
 
@@ -41,6 +45,9 @@ def DoAction(action, playerObj, enemyData):
 
     elif action == 'blacksmithArmorUpgrade':
         blacksmith.BlacksmithArmorUpgrade(playerObj)
+    
+    elif action == 'blacksmithSpecialAction':
+        blacksmith.BlacksmithSpecial(playerObj)
 
     elif action == 'innGamble':
         inn.InnGamble(playerObj)
@@ -58,6 +65,12 @@ def DoAction(action, playerObj, enemyData):
     elif action == 'innTownNews':
         inn.InnTownNews(playerObj)
     
+    elif action == 'innTalkInnkeeper':
+        inn.TalkInnkeeper(playerObj)
+    
+    elif action == 'dragoncave':
+        dragon.cave(playerObj)
+
     elif action == 'help':
         showHelp()
 
@@ -82,16 +95,29 @@ def showHelp():
     print('''
     [GAME HELP]
 
-    Forest
+    -Forest
         Exploring the Forest allows you to gain eXPerience points and level up. Random events may
         occur to help or hinder.
 
-    Camping
+    -Camping
         Regain some Health Points by taking a short snooze.
 
-    Town
+    -Town
         Explore the offerings, including the Inn and Blacksmith. The Inn will allow you to Save your
         Game by purchasing a night's stay, while the Blacksmith will help you upgrade your Weapons
-        and Armor. 
+        and Armor.
+
+        --The Inn
+            The Inn offers a variety of things to do, including the ability to stay the night (Save).
+        
+        --Blacksmith
+            Upgrade your Armor and buy new Weapons.
+    
+    -Leveling Up
+        You start the game with no Level. Exploring the forest will gain you XP. Levels are at XP of 25,
+        50, 150, and 500. Each time you level up you will receive bonuses to help you along.
+
+    -Quitting
+        The game will also save your Player when you quit, but not with the same comfort as a night at the Inn.
     
     ''')

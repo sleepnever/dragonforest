@@ -16,7 +16,7 @@ class Player():
         self._name = name
         self._level = 0
         self._maxHealth = self._maxHealth # rename this, add scope
-        self._health = self._maxHealth # rename this, add scope
+        self._health = 0
         self._maxArmor = self._maxArmor # rename this, add scope
         self._armor = 0
         self._xp = 0
@@ -24,6 +24,7 @@ class Player():
         self._lastTimeCamped = None
         self._hasDiscoveredTown = False
         self._stayedAtInn = False
+        self._blacksmithSpecialReceived = False
 
         self.WeaponData = weaponData
         # Instantiate Weapon into a instance var in Player
@@ -130,6 +131,14 @@ class Player():
         self._stayedAtInn = value
 
     @property
+    def BlacksmithSpecialReceived(self):
+        return self._blacksmithSpecialReceived
+    
+    @BlacksmithSpecialReceived.setter
+    def BlacksmithSpecialReceived(self, value):
+        self._blacksmithSpecialReceived = value
+
+    @property
     def Level1BonusReceived(self):
         return self._level1BonusReceived
 
@@ -167,6 +176,7 @@ class Player():
 
     # After new player is created, set default values
     def SetDefaultValues(self):
+        self.Health = self._maxHealth
         self.Money = 10
 
 

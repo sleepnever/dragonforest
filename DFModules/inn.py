@@ -40,6 +40,7 @@ def Inn(p1):
     [O]rder a Drink
     [S]tay the Night
     [R]ead the Town News
+    [T]alk to the Inn Keeper
 
     [L]eave the Inn        
         ''')
@@ -62,6 +63,9 @@ def Inn(p1):
 
         elif action == 'R':
             common.DoAction('innTownNews', p1, None)
+
+        elif action == 'T':
+            common.DoAction('innTalkInnkeeper', p1, None)
 
         elif action == 'L':
             isPlayerAtInn = False
@@ -121,3 +125,12 @@ def InnGamble(p1):
     
     else:
         print('Come back anytime!')
+
+def TalkInnkeeper(p1):
+    print('''
+    You see the Inn Keeper sitting at the end of the bar. You know its him by the disgruntled look on his face.
+    
+    "Are you Scotty?" you ask nervously. "Maybe.", he says looking straight ahead without a single care.
+
+    "Uh, nevermind", you reply and walk away. "Sounds good", he says with a grin. 
+    ''')

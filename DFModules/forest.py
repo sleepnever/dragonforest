@@ -83,6 +83,7 @@ def IsForestEvent(p1):
 
     randInt = random.randint(1,100)
 
+    # Gain health
     if randInt == 10 and p1.Health < p1.MaxHealth:
         print('You found a bag of apples under a tree, which you greedily eat before the owner returns.')
         print('Feeling fat and happy, and maybe a bit guilty, at least you''ve restored 5 HP')
@@ -90,6 +91,7 @@ def IsForestEvent(p1):
         p1.Health = 5
         return True
 
+    # Trip and hurt self
     elif randInt == 20:
         print('So busy looking at everything, except where you are walking!')
         print('You trip over a log, and fall flat on your face, losing 10 HP')
@@ -97,9 +99,43 @@ def IsForestEvent(p1):
         p1.Health = -10
         return True
     
+    # Get robbed w/ some complexity
+    elif randInt == 30:
+        print('"HALT!" says a voice from the bushes. You freeze in your tracks. A gang emerges.')
+        if p1.Weapon.Name == "Stick":
+            print('''
+            You hold up your Stick, and swing it to keep them at a distance. They start laughing.
+            
+            "Look everyone!, he's going to beat us off with his fishing pole!" says the gangly one.
+
+            A fishing pole... that's a great idea you think. And then as you're daydreaming of fish,
+            you take a punch to the stomach. Ooof!
+            ''')
+            if p1.Money >= 5:
+                print('''
+                Some coins fall out of your pocket. Another member kicks you and steals them as they 
+                run away. You are a little bruised and missing some money, but it could have been 
+                worse. Now about that fish...
+                ''')
+                p1.Money = -3
+            elif p1.Money == 0:
+                print('''
+                Its a good thing you didn't have any money for them to steal. They may have tried to
+                beat you for all of it.
+                ''')
+        else:
+            print(f'You hold up your {p1.Weapon.Name}, and swing it to keep them at a distance.')
+            if p1.Weapon.Name != "Dragon Bone Sword":
+                print(f'The gang brandish a variety of weapons and you realize you are outnumbered, even with your {p1.Weapon.Name}.')
+                if p1.Money >= 10:
+                    moneyToToss = random.randint(10,p1.Money)
+                    print(f'In a quick decision, you reach into your pocket and pull out {moneyToToss} coins and throw them into the air. And RUN.')
+                    p1.Money = (-1 * moneyToToss)
+        return True
+
     elif randInt == 98:
         print('Suddenly a giant fluffy bunny with floppy ears appears on a rock in front of you.')
-        print('He blinks and out of no where says "HEY! I''m Vlad, the Magical Cookie Bunny!"')
+        print('He blinks and out of no where says "HEY! I\'m Vlad, the Magical Cookie Bunny!"')
         print('You stand there stunned, but even more so as he hands you a giant chocolate chip cookie worth 15 HP.')
         print()
         p1.Health = 15

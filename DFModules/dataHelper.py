@@ -54,6 +54,7 @@ def LoadGame(playerSaveFile):
     p1.LastTimeCamped = datetime.datetime.strptime(config['PLAYER']['LastTimeCamped'], "%Y-%m-%d %H:%M:%S.%f") # 2020-10-06 22:37:50.819024
     p1.HasDiscoveredTown = strtobool(config['PLAYER']['HasDiscoveredTown'])
     p1.StayedAtInn = strtobool(config['PLAYER']['StayedAtInn'])
+    p1.BlacksmithSpecialReceived = strtobool(config['PLAYER']['BlacksmithSpecialReceived'])
     p1.Level1BonusReceived = strtobool(config['PLAYER']['Level1BonusReceived'])
     p1.Level2BonusReceived = strtobool(config['PLAYER']['Level2BonusReceived'])
     p1.Level3BonusReceived = strtobool(config['PLAYER']['Level3BonusReceived'])
@@ -83,6 +84,7 @@ def SaveGame(p1):
         'LastTimeCamped':p1.LastTimeCamped,
         'HasDiscoveredTown':p1.HasDiscoveredTown,
         'StayedAtInn':p1.StayedAtInn,
+        'BlacksmithSpecialReceived':p1.BlacksmithSpecialReceived,
         'Level1BonusReceived':p1.Level1BonusReceived,
         'Level2BonusReceived':p1.Level2BonusReceived,
         'Level3BonusReceived':p1.Level3BonusReceived,
