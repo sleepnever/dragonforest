@@ -3,17 +3,14 @@
 # Description:  Text adventure game
 # Author:       Rob Watts
 # Min Python:   3.7
-# Updated:      10/9/2020
+# Updated:      10/10/2020
 #
 # TODO
 # -General
 #   -Search code for TODO/HACK/BUG comments
 # -BUG
-#   - ** When you level up, the Player Level Bonus resets the XP to 10 **
-#   -Cannot exit the Load Game menu if you don't see anything there that is yours
 #   -Any single quotes escaped by the \ in a (''' x ''') block have the ' missing
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
-#   -Put dynamic data (json filepaths, etc) into /Data/configData.ini
 #----------------------------
 
 # Python Libraries
@@ -30,8 +27,7 @@ from DFModules import forest
 from DFModules import common
 
 
-# Constants
-CONFIG_FILE = 'configData.ini'
+#CONFIG_FILE = 'configData.ini'
 
 
 #---------------------------
@@ -47,7 +43,6 @@ def main():
 
     # Load the enemy data
     enemyData = dataHelper.LoadDataFromJson("Data\\enemies.json", "r")
-
 
     artwork.showTitle()
 
@@ -68,31 +63,30 @@ def main():
 
     elif action == 'L':
         
-        # Attempt to Load Game
-        saves = list(dataHelper.GetGameSaves())
-        
-        if len(saves) != 0:
-            print('------- SAVED GAMES -----------')
-            print()
-            for idx, save in enumerate(saves):
-                print(f"[{idx}] {save.split('_')[0]}")
-            
-            loadAnswer = int(input('Save Slot Number: '))
+        result = common.LoadSavedGamesMenu()
 
-            if loadAnswer > -1 and loadAnswer <= len(saves):
-                p1 = dataHelper.LoadGame(saves[loadAnswer])
-
-                if p1.StayedAtInn == True:
-                    loudNoisesList = ['screeching','yelling','crying','pounding on the wall']
-                    noise = random.choice(loudNoisesList)
-                    print(f'\nThat was a restful sleep, except for the {noise}. You\'ve gained 10 HP')
-                    p1.Health = 10
+        if result == None:
+            isNewGame = True
+            print('No Save Found or Loaded')
+        else:
+            # Post Load Actions
+            p1 = result # re-assign for naming purposes only
+            result = None # release memory
+            if p1.StayedAtInn == True:
+                loudNoisesList = ['screeching','yelling','crying','pounding on the wall']
+                noise = random.choice(loudNoisesList)
+                print(f'\nThat was a restful sleep, except for the {noise}. You\'ve gained 10 HP')
+                p1.Health = 10
+            else:
+                p1.Health = -5
+                if p1.IsDead():
+                    print('\nUnfortunately you are not only merely dead, you are really most sincerely dead.')
+                    print('< Deleting Save Game >')
+                    dataHelper.DeleteSaveGame(p1.Name)
+                    sys.exit()
                 else:
                     print('\nThe ground was hard and cold. You might have ants in your pants. You\'ve lost 5 HP')
                     p1.Health = -5
-        else:
-            print('No save games found.')
-            isNewGame = True
 
     elif action == 'Q':
         sys.exit()

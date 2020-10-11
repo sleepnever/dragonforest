@@ -35,7 +35,6 @@ class Player():
         self._level1BonusReceived = False
         self._level2BonusReceived = False
         self._level3BonusReceived = False
-        self._level4BonusReceived = False
     
     # ########################
     # PROPERTIES
@@ -162,13 +161,6 @@ class Player():
     def Level3BonusReceived(self, value):
         self._level3BonusReceived = value
 
-    @property
-    def Level4BonusReceived(self):
-        return self._level4BonusReceived
-
-    @Level4BonusReceived.setter
-    def Level4BonusReceived(self, value):
-        self._level4BonusReceived = value
 
     # ########################
     # METHODS
@@ -192,10 +184,10 @@ class Player():
         """ Assigns the weapon to the Player if Player has enough Money """
 
         weapon = self.GetWeapon(weaponName)
-
-        if self._money >= weapon.Cost:
-            self.Weapon = self.GetWeapon(weaponName)
-            self._money -= weapon.Cost
+        
+        if self.Money >= weapon.Cost:
+            self.Weapon = weapon
+            self.Money = (-1 * weapon.Cost)
             return True
         
         return False
@@ -212,9 +204,9 @@ class Player():
     def UpgradeArmor(self, cost, upgradeAmount):
         """ Upgrade Armor """
         
-        if self._money >= cost:
-            self._money -= cost
-            self._armor += upgradeAmount
+        if self.Money >= cost:
+            self.Money = (-1 * cost)
+            self.Armor = upgradeAmount
             return True
         
         return False
@@ -225,15 +217,15 @@ class Player():
         """ Calculates the damage taken, with and without armor """
         #print('DEBUG: CalculateDamageTaken(self, {})'.format(damage))
 
-        if self._armor == 0:
-            self._health -= damage
+        if self.Armor == 0:
+            self.Health = (-1 * damage)
             healthDamage = damage
         else:
             # Ding the armor first by a little bit
             #print('DEBUG: Armor Before Hit = {}'.format(self._armor))
             damageMultiplier = random.uniform(0.001, 0.003)
-            armorDamage = int(math.ceil((self._armor * damageMultiplier)*100))
-            self._armor -= armorDamage
+            armorDamage = int(math.ceil((self.Armor * damageMultiplier)*100))
+            self.Armor = (-1 * armorDamage)
             #print('DEBUG: Armor After Hit = {}'.format(self._armor))
 
             # Take the amount of armor damage and and subtract it
@@ -241,7 +233,7 @@ class Player():
             # damage will be taken  from the player's health
             #print('DEBUG: Health Before Hit = {}'.format(self._health))
             healthDamage = abs(damage - armorDamage)
-            self._health -= healthDamage
+            self.Health = (-1 * healthDamage)
             #print('DEBUG: Health After Hit/Armor absorb = {}'.format(self._health))
 
         return healthDamage
@@ -249,50 +241,41 @@ class Player():
     def LevelUp(self):
         """ Level up the Player """
 
-        if self._xp < 25:
+        if self.Xp < 25:
             pass
-        elif self._xp >= 25 and self._xp < 50:
-            self._level = 1
+        elif self.Xp >= 25 and self.Xp < 75:
+            self.Level = 1
             
-        elif self._xp >= 50 and self._xp < 150:
-            self._level = 2
+        elif self.Xp >= 75 and self.Xp < 250:
+            self.Level = 2
             
-        elif self._xp >= 150 and self._xp <= 500:
-            self._level = 3
-            
-        elif self._xp >= 500 and self._xp <= 750:
-            self._level = 4
+        elif self.Xp >= 250 and self.Xp <= 400:
+            self.Level = 3
         
         self.GiveLevelBonus()
 
     def GiveLevelBonus(self):
         """ Level Up Bonuses """
 
-        if self._level == 1 and self._level1BonusReceived == False:
-            self._level1BonusReceived = True
-            self._money = 10
-            self._armor = 10
-            self._xp = 10
+        if self.Level == 1 and self.Level1BonusReceived == False:
+            self.Level1BonusReceived = True
+            self.Money = 20
+            self.Armor = 25
+            self.Xp = 10
         
-        elif self._level == 2 and self._level2BonusReceived == False:
-            self._level2BonusReceived = True
-            self._money = 15
-            self._armor = 25
-            self._xp = 20
+        elif self.Level == 2 and self.Level2BonusReceived == False:
+            self.Level2BonusReceived = True
+            self.Money = 40
+            self.Armor = 25
+            self.Xp = 50
         
-        elif self._level == 3 and self._level3BonusReceived == False:
-            self._level3BonusReceived = True
-            self._money = 25
-            self._armor = 45
-            self._xp = 30
+        elif self.Level == 3 and self.Level3BonusReceived == False:
+            self.Level3BonusReceived = True
+            self.Money = 60
+            self.Armor = 50
+            self.Xp = 100
 
-        elif self._level == 4 and self._level4BonusReceived == True:
-            self._level4BonusReceived = True
-            self._money = 35
-            self._armor = 65
-            self._xp = 40
 
     def IsDead(self):
         """ Check to see if the Player is Dead """
-
-        return True if (self._health <= 0) else False
+        return True if (self.Health <= 0) else False

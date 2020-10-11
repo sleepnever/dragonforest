@@ -49,7 +49,7 @@ def LoadGame(playerSaveFile):
     p1.Health = int(config['PLAYER']['Health'])
     p1.Armor = int(config['PLAYER']['Armor'])
     p1.Xp = int(config['PLAYER']['Xp'])
-    p1.Weapon.Name = config['PLAYER']['Weapon']
+    p1.Weapon = p1.GetWeapon(config['PLAYER']['Weapon'])
     p1.Money = int(config['PLAYER']['Money'])
     p1.LastTimeCamped = datetime.datetime.strptime(config['PLAYER']['LastTimeCamped'], "%Y-%m-%d %H:%M:%S.%f") # 2020-10-06 22:37:50.819024
     p1.HasDiscoveredTown = strtobool(config['PLAYER']['HasDiscoveredTown'])
@@ -58,7 +58,6 @@ def LoadGame(playerSaveFile):
     p1.Level1BonusReceived = strtobool(config['PLAYER']['Level1BonusReceived'])
     p1.Level2BonusReceived = strtobool(config['PLAYER']['Level2BonusReceived'])
     p1.Level3BonusReceived = strtobool(config['PLAYER']['Level3BonusReceived'])
-    p1.Level4BonusReceived = strtobool(config['PLAYER']['Level4BonusReceived'])
 
     return p1
 
@@ -88,10 +87,15 @@ def SaveGame(p1):
         'Level1BonusReceived':p1.Level1BonusReceived,
         'Level2BonusReceived':p1.Level2BonusReceived,
         'Level3BonusReceived':p1.Level3BonusReceived,
-        'Level4BonusReceived':p1.Level4BonusReceived
         }
     
     # TODO: Update to use PathLib
     playerSaveFile = p1.Name + GAMESAVE_BASEFILE
     with open(os.path.join(os.getcwd(),playerSaveFile),'w') as saveFile:
         config.write(saveFile)
+
+def DeleteSaveGame(playerName):
+
+    playerSaveFile = playerName + GAMESAVE_BASEFILE
+    if os.path.exists(playerSaveFile):
+        os.remove(playerSaveFile)

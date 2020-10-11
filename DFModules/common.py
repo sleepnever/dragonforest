@@ -1,4 +1,4 @@
-
+import random
 import sys
 
 # Game Modules
@@ -72,7 +72,7 @@ def DoAction(action, playerObj, enemyData):
         dragon.cave(playerObj)
 
     elif action == 'help':
-        showHelp()
+        DisplayHelp()
 
 
 def DisplayPlayerStats(p1):
@@ -90,10 +90,10 @@ def DisplayPlayerStats(p1):
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
 
-def showHelp():
+def DisplayHelp():
 
     print('''
-    [GAME HELP]
+    -=-=-= GAME HELP =-=-=-
 
     -Forest
         Exploring the Forest allows you to gain eXPerience points and level up. Random events may
@@ -115,9 +115,40 @@ def showHelp():
     
     -Leveling Up
         You start the game with no Level. Exploring the forest will gain you XP. Levels are at XP of 25,
-        50, 150, and 500. Each time you level up you will receive bonuses to help you along.
+        75 and 250. Each time you level up you will receive bonuses to help you along.
+
+    -Dying
+        If you die in battle, your Save file is retained from the last time you saved (Quit/Inn Stay), but
+        nothing you've earned since then is kept.
 
     -Quitting
         The game will also save your Player when you quit, but not with the same comfort as a night at the Inn.
     
     ''')
+
+def LoadSavedGamesMenu():
+
+    # Check for Saves
+    saves = list(dataHelper.GetGameSaves())
+
+    if saves == 0:
+        return None
+
+    print('-=-=-= SAVED GAMES =-=-=-')
+    print()
+    print('SLOT #\t\tSAVE NAME')
+
+    for idx, save in enumerate(saves):
+        print(f"[{idx}]\t\t{save.split('_')[0]}")
+    
+    print('\n[Q]uit')
+    print()
+
+    loadAnswer = input('Command: ').upper()
+
+    if loadAnswer == 'Q' or loadAnswer.isdigit() == False:
+        return None
+
+    elif int(loadAnswer) > -1 and int(loadAnswer) <= len(saves):
+        # returns a Player object
+        return dataHelper.LoadGame(saves[int(loadAnswer)])
