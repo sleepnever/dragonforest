@@ -55,6 +55,7 @@ def LoadGame(playerSaveFile):
     p1.HasDiscoveredTown = strtobool(config['PLAYER']['HasDiscoveredTown'])
     p1.StayedAtInn = strtobool(config['PLAYER']['StayedAtInn'])
     p1.BlacksmithSpecialReceived = strtobool(config['PLAYER']['BlacksmithSpecialReceived'])
+    p1.HadDragonDiscussion = strtobool(config['PLAYER']['HadDragonDiscussion'])
     p1.Level1BonusReceived = strtobool(config['PLAYER']['Level1BonusReceived'])
     p1.Level2BonusReceived = strtobool(config['PLAYER']['Level2BonusReceived'])
     p1.Level3BonusReceived = strtobool(config['PLAYER']['Level3BonusReceived'])
@@ -84,6 +85,7 @@ def SaveGame(p1):
         'HasDiscoveredTown':p1.HasDiscoveredTown,
         'StayedAtInn':p1.StayedAtInn,
         'BlacksmithSpecialReceived':p1.BlacksmithSpecialReceived,
+        'HadDragonDiscussion':p1.HadDragonDiscussion,
         'Level1BonusReceived':p1.Level1BonusReceived,
         'Level2BonusReceived':p1.Level2BonusReceived,
         'Level3BonusReceived':p1.Level3BonusReceived,

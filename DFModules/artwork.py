@@ -80,6 +80,21 @@ def showDragonCave():
     -------------------
     ''')
 
+def showDragonAmazement():
+    print('''
+       
+       ^^^^^    ^^^^^
+        ____    ____
+       /    \\ /    \\
+       |(O )|  |( O)|
+       |    |  |    |
+       \\___/  \\___/
+           (    )
+        _____________
+       /            \\
+       \\___________/
+    ''')
+
 def InnGamblePinfinger():
     print('''
         [ ]

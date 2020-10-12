@@ -25,6 +25,7 @@ class Player():
         self._hasDiscoveredTown = False
         self._stayedAtInn = False
         self._blacksmithSpecialReceived = False
+        self._hadDragonDiscussion = False
 
         self.WeaponData = weaponData
         # Instantiate Weapon into a instance var in Player
@@ -136,6 +137,14 @@ class Player():
     @BlacksmithSpecialReceived.setter
     def BlacksmithSpecialReceived(self, value):
         self._blacksmithSpecialReceived = value
+
+    @property
+    def HadDragonDiscussion(self):
+        return self._hadDragonDiscussion
+    
+    @HadDragonDiscussion.setter
+    def HadDragonDiscussion(self, value):
+        self._hadDragonDiscussion = value
 
     @property
     def Level1BonusReceived(self):

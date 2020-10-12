@@ -8,7 +8,10 @@
 # TODO
 # -General
 #   -Search code for TODO/HACK/BUG comments
+#   -Need ways to get health other than leveling up
+#   -Need to finish end boss
 # -BUG
+#   -432 coin for 218 AP, current AP=2 --way too much, and max Armor = 200
 #   -Any single quotes escaped by the \ in a (''' x ''') block have the ' missing
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
 #----------------------------
@@ -75,8 +78,10 @@ def main():
             if p1.StayedAtInn == True:
                 loudNoisesList = ['screeching','yelling','crying','pounding on the wall']
                 noise = random.choice(loudNoisesList)
+
                 print(f'\nThat was a restful sleep, except for the {noise}. You\'ve gained 10 HP')
                 p1.Health = 10
+                p1.StayedAtInn = False # this needs to be set to false again
             else:
                 p1.Health = -5
                 if p1.IsDead():
@@ -121,7 +126,7 @@ def main():
     #
     while exitGame == False:
 
-        if p1.Level >= 1 and p1.HasDiscoveredTown == True:
+        if p1.Level == 1 or p1.Level == 2 and p1.HasDiscoveredTown == True:
             print('''
     -= FOREST MENU =-
         
@@ -173,7 +178,7 @@ def main():
             common.DoAction('town', p1, None)
 
         elif command == 'D':
-            command.DoAction('dragoncave', p1, enemyData)
+            common.DoAction('dragoncave', p1, enemyData)
 
         elif command == 'Q':
             exitGame = True

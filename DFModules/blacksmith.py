@@ -56,7 +56,8 @@ def Blacksmith(p1):
 
 def BlacksmithWeapons(p1):
 
-    print('Welcome to my Armory wall. This is what I have for purchase. Coin only.')
+    print(f'"Welcome to my Armory wall. This is what I have for purchase. Coin only."')
+    print(f'You have {p1.Money} coin.')
     print()
     print('<===|- WEAPONS -|===>')
     print()

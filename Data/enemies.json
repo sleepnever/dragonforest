@@ -121,12 +121,12 @@
             "maxxp": 40
         },
         {
-            "name": "Blue Dragon",
+            "name": "Dragon",
             "level": 4,
-            "health": 150,
-            "armor": 75,
-            "damage": 125,
-            "maxxp": 75
+            "health": 400,
+            "armor": 100,
+            "damage": 150,
+            "maxxp": 150
         }
     ]
 }

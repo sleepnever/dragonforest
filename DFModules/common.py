@@ -69,7 +69,7 @@ def DoAction(action, playerObj, enemyData):
         inn.TalkInnkeeper(playerObj)
     
     elif action == 'dragoncave':
-        dragon.cave(playerObj)
+        dragon.cave(playerObj, enemyData)
 
     elif action == 'help':
         DisplayHelp()
@@ -84,6 +84,7 @@ def DisplayPlayerStats(p1):
     print(f'| Health (HP)     :  {p1.Health}/{p1.MaxHealth}')
     print(f'| Armor  (AP)     :  {p1.Armor}/{p1.MaxArmor}')
     print(f'| Weapon / Damage :  {p1.Weapon.Name} / {p1.Weapon.Damage}')
+    print(f'| Level           :  {p1.Level}')
     print(f'| Experience (XP) :  {p1.Xp}')
     print(f'| Gold Coins      :  {p1.Money}')
     print('|')

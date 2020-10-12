@@ -66,6 +66,14 @@ class Enemy():
     # ########################
     # METHODS
     # ########################
+    @staticmethod
+    def CreateEnemyByName(enemyName, enemyData):
+
+        # search through the JSON data to find Enemies that are <= level of the Player
+        for enemy in enemyData['enemies']:
+            if enemy['name'].lower() == enemyName.lower():
+                return Enemy(enemy)
+
 
     # BUG: TypeError: GetEnemyByPlayerLevel() missing 1 required positional argument: 'enemyData'
     # FIX: Change to @staticmethod, because when this is called, an enemy instance hasn't been created

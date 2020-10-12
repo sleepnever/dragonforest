@@ -68,7 +68,12 @@ def ExploreForest(p1, enemyData):
         # Call Attack
         combat.Attack(p1, enemy)
 
+        currentLevel = p1.Level
         p1.LevelUp()
+        newLevel = p1.Level
+
+        if newLevel > currentLevel:
+            print('\nYou have Leveled Up!')
 
     else:
 
@@ -113,9 +118,9 @@ def IsForestEvent(p1):
             ''')
             if p1.Money >= 5:
                 print('''
-                Some coins fall out of your pocket. Another member kicks you and steals them as they 
-                run away. You are a little bruised and missing some money, but it could have been 
-                worse. Now about that fish...
+            Some coins fall out of your pocket. Another member kicks you and steals them as they 
+            run away. You are a little bruised and missing some money, but it could have been 
+            worse. Now about that fish...
                 ''')
                 p1.Money = -3
             elif p1.Money == 0:
