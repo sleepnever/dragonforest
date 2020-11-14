@@ -106,7 +106,7 @@ def IsForestEvent(p1):
     
     # Get robbed w/ some complexity
     elif randInt == 30:
-        print('"HALT!" says a voice from the bushes. You freeze in your tracks. A gang emerges.')
+        print('\t"HALT!" says a voice from the bushes. You freeze in your tracks. A gang emerges.')
         if p1.Weapon.Name == "Stick":
             print('''
             You hold up your Stick, and swing it to keep them at a distance. They start laughing.
@@ -187,11 +187,19 @@ def Camp(p1):
 
     print('You decide this is a good place to camp for a while.')
     
+    # BUG: within VSCode this properly Zzzzz's but in terminal it pauses for 10 and then prints Zzzzz
+    # and the while loop below does the same thing.
     print('Z',end='')
     for _ in range(10): # changed i -> _ which is a python throwaway var
         print('z',end='')
         time.sleep(0.5)
-        
+    
+    #campTimer = 10
+    #while campTimer > 0:
+    #    print('z',end='')
+    #    campTimer -= 1
+    #    time.sleep(0.5)
+
     print()
 
     # Set date time camped

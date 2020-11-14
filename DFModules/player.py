@@ -224,7 +224,6 @@ class Player():
     # Armor should take the brunt of the hit first, but health should still be affected
     def CalculateDamageTaken(self, damage):
         """ Calculates the damage taken, with and without armor """
-        #print('DEBUG: CalculateDamageTaken(self, {})'.format(damage))
 
         if self.Armor == 0:
             self.Health = (-1 * damage)
@@ -254,6 +253,7 @@ class Player():
             pass
         elif self.Xp >= 25 and self.Xp < 75:
             self.Level = 1
+            self.HasDiscoveredTown = True
             
         elif self.Xp >= 75 and self.Xp < 250:
             self.Level = 2

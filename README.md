@@ -9,7 +9,7 @@ I'm doing this as a project to learn Python. All ASCII art and code is by me - o
 ### How to Play
 1. Clone project locally
 2. Make sure you're running at least Python 3.7
-3. Run 'python3 DragonForest.py' from the Python 3 cmdline
+3. Run 'python DragonForest.py' from the Python cmdline
 4. Follow prompts, explore or use in-game Help
 
 ### Goals
@@ -21,4 +21,7 @@ I'm doing this as a project to learn Python. All ASCII art and code is by me - o
     * Conditionals
     * Modules
     * Error handling
-    * Unit Testing (pytest)
+    * Unit Testing (PyTest)
+
+### Misc
+Added /rnd is the "Research & Development" folder for one offs of testing new things

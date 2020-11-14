@@ -3,15 +3,15 @@
 # Description:  Text adventure game
 # Author:       Rob Watts
 # Min Python:   3.7
-# Updated:      10/10/2020
+# Updated:      11/14/2020
 #
 # TODO
 # -General
 #   -Search code for TODO/HACK/BUG comments
 #   -Need ways to get health other than leveling up
 #   -Need to finish end boss
+#   -Add testing and refactor as needed to support testing
 # -BUG
-#   -432 coin for 218 AP, current AP=2 --way too much, and max Armor = 200
 #   -Any single quotes escaped by the \ in a (''' x ''') block have the ' missing
 #   -Some art with \ are spaced incorrectly on the line, like showForest()
 #----------------------------
@@ -79,7 +79,7 @@ def main():
                 loudNoisesList = ['screeching','yelling','crying','pounding on the wall']
                 noise = random.choice(loudNoisesList)
 
-                print(f'\nThat was a restful sleep, except for the {noise}. You\'ve gained 10 HP')
+                print(f'\nThat was a restful sleep, except for the {noise}. You\'ve gained 10 HP.')
                 p1.Health = 10
                 p1.StayedAtInn = False # this needs to be set to false again
             else:
@@ -91,7 +91,6 @@ def main():
                     sys.exit()
                 else:
                     print('\nThe ground was hard and cold. You might have ants in your pants. You\'ve lost 5 HP')
-                    p1.Health = -5
 
     elif action == 'Q':
         sys.exit()

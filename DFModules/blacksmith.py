@@ -83,7 +83,6 @@ def BlacksmithWeapons(p1):
 
     elif int(command) in range(1,len(p1.WeaponData['weapons'])):
         
-        #weaponName = bsmithWeapons[int(command)]
         weaponName = weaponDict.get(int(command))
 
         # player can purchase
@@ -105,8 +104,12 @@ def BlacksmithArmorUpgrade(p1):
 
     if p1.Armor != p1.MaxArmor:
         
-        upgradeCost = ((p1.Xp * 2) * random.randint(1,3))
-        upgradeAmount = (p1.Xp + p1.Armor)
+        # BUG: 432 coin for 218 AP, current AP=2 --way too much, and max Armor = 200
+        # FIX: Change formula
+        #   Ex: Cost -> ((10 XP * 0.2)*2) = 4 * random(1-3) = 4, 8, 12
+        #       Armor Amount -> 10 + 3 = 13
+        upgradeCost = int((((p1.Xp * 0.2)*2) * random.randint(1,3)))
+        upgradeAmount = ((p1.Xp + p1.Armor) // 2)
         
         print(f'Upgrade Cost : {upgradeCost} coin for {upgradeAmount} AP')
 

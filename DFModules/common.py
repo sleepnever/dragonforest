@@ -16,8 +16,8 @@ from DFModules import dataHelper
 def DoAction(action, playerObj, enemyData):
 
     if action == 'talk':
-        # do something.. need function/module for NPCs
-        print('TODO: run into random NPC in forest, hear a story/get info')
+        # TODO: do something.. need function/module for NPCs
+        pass
         
     elif action == 'exploreForest':
         forest.ExploreForest(playerObj, enemyData)
