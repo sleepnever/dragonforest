@@ -3,7 +3,7 @@
 # Description:  Text adventure game
 # Author:       Rob Watts
 # Min Python:   3.7
-# Updated:      11/14/2020
+# Updated:      03/07/2021
 #
 # TODO
 # -General
@@ -42,12 +42,12 @@ def main():
     exitGame = False
 
     # Load the weapon data
-    weaponData = dataHelper.LoadDataFromJson("Data\\weapons.json", "r")
+    weaponData = dataHelper.load_data_from_json("Data\\weapons.json", "r")
 
     # Load the enemy data
-    enemyData = dataHelper.LoadDataFromJson("Data\\enemies.json", "r")
+    enemyData = dataHelper.load_data_from_json("Data\\enemies.json", "r")
 
-    artwork.showTitle()
+    artwork.show_title()
 
     print('''
 
@@ -66,7 +66,7 @@ def main():
 
     elif action == 'L':
         
-        result = common.LoadSavedGamesMenu()
+        result = common.load_saved_games_menu()
 
         if result == None:
             isNewGame = True
@@ -84,10 +84,10 @@ def main():
                 p1.StayedAtInn = False # this needs to be set to false again
             else:
                 p1.Health = -5
-                if p1.IsDead():
+                if p1.is_dead():
                     print('\nUnfortunately you are not only merely dead, you are really most sincerely dead.')
                     print('< Deleting Save Game >')
-                    dataHelper.DeleteSaveGame(p1.Name)
+                    dataHelper.delete_save_game(p1.Name)
                     sys.exit()
                 else:
                     print('\nThe ground was hard and cold. You might have ants in your pants. You\'ve lost 5 HP')
@@ -115,10 +115,10 @@ def main():
 
         # Create Player
         p1 = Player(playerName, weaponData)
-        p1.SetDefaultValues()
+        p1.set_default_values()
 
     # Display Stats
-    common.DisplayPlayerStats(p1)
+    common.display_player_stats(p1)
 
     #
     # GAME LOOP
@@ -162,27 +162,27 @@ def main():
         command = input('Command: ').upper()
 
         if command == 'E':
-            common.DoAction('exploreForest', p1, enemyData)
+            common.do_action('exploreForest', p1, enemyData)
             
         elif command == 'C':
-            common.DoAction('camp', p1, None)
+            common.do_action('camp', p1, None)
 
         elif command == 'S':
-            common.DoAction('stats', p1, None)
+            common.do_action('stats', p1, None)
 
         elif command == 'H':
-            common.DoAction('help', None, None)
+            common.do_action('help', None, None)
 
         elif command == 'T' and p1.HasDiscoveredTown:
-            common.DoAction('town', p1, None)
+            common.do_action('town', p1, None)
 
-        elif command == 'D':
-            common.DoAction('dragoncave', p1, enemyData)
+        elif command == 'D' and p1.Level == 3:
+            common.do_action('dragoncave', p1, enemyData)
 
         elif command == 'Q':
             exitGame = True
             print('You walk around and find a big log. You\'re not sure what lives in there. And it smells.')
-            dataHelper.SaveGame(p1)
+            dataHelper.save_game(p1)
 
         # DEBUG
         elif command == "DD":

@@ -10,7 +10,7 @@ from DFModules import minigames
 # Functions related to the Inn
 #
 
-def PlayerCanStayAtInn(p1):
+def player_can_stay_at_inn(p1):
 
     if p1.Level == 1 and p1.Money >= 5:
         return True
@@ -21,9 +21,9 @@ def PlayerCanStayAtInn(p1):
 
     return False
 
-def Inn(p1):
+def inn(p1):
 
-    artwork.showInn()
+    artwork.show_inn()
 
     print('You burst through the doors of the Inn like you own the place!')
     print()
@@ -48,29 +48,29 @@ def Inn(p1):
         action = input('Command: ').upper()
         
         if action == 'G':
-            common.DoAction('innGamble', p1, None)
+            common.do_action('innGamble', p1, None)
 
         elif action == 'S':
             # Can player afford to stay?
-            if PlayerCanStayAtInn(p1):
+            if player_can_stay_at_inn(p1):
                 isPlayerAtInn = False
-                common.DoAction('innStay', p1, None)
+                common.do_action('innStay', p1, None)
             else:
                 print('\n"Sorry," says the Innkeeper, "but you don''t have enough to stay."')
 
         elif action == 'O':
-            common.DoAction('innDrink', p1, None)
+            common.do_action('innDrink', p1, None)
 
         elif action == 'R':
-            common.DoAction('innTownNews', p1, None)
+            common.do_action('innTownNews', p1, None)
 
         elif action == 'T':
-            common.DoAction('innTalkInnkeeper', p1, None)
+            common.do_action('innTalkInnkeeper', p1, None)
 
         elif action == 'L':
             isPlayerAtInn = False
 
-def InnDrink(p1):
+def inn_drink(p1):
     
     print('You take a swig from the big jug...')
     print()
@@ -88,7 +88,7 @@ def InnDrink(p1):
     p1.Armor = positiveArmorAmount
     print(f'You have gained {positiveArmorAmount} AP !')
 
-def InnTownNews(p1):
+def inn_town_news(p1):
     
     print('------------------------------------------------------------------------')
     print()
@@ -100,7 +100,7 @@ def InnTownNews(p1):
     print('------------------------------------------------------------------------')
 
 
-def InnGamble(p1):
+def inn_gamble(p1):
     
     gameList = ['Thimblerig', 'Pinfinger', 'Guess the Number']
     time.sleep(1)
@@ -119,14 +119,14 @@ def InnGamble(p1):
             print(f'You toss {actionWager} coins on to the table and have a seat The other\'s toss in a few as well.')
             npcWagerAmount = random.randint(2,15)
 
-            minigames.SelectGame(p1, game, actionWager, npcWagerAmount)
+            minigames.select_game(p1, game, actionWager, npcWagerAmount)
         else:
             print(f'You can\'t wager {actionWager} when you only have {p1.Money}')
     
     else:
         print('Come back anytime!')
 
-def TalkInnkeeper(p1):
+def talk_inn_keeper(p1):
     print('''
     You see the Inn Keeper sitting at the end of the bar. You know its him by the disgruntled look on his face.
     

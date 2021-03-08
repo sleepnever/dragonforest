@@ -19,9 +19,9 @@ noCampingStrings = ['You can''t camp all day, go do something!','Such a shame yo
 # Functions that pertain to exploring the forest
 #
 
-def ExploreForest(p1, enemyData):
+def explore_forest(p1, enemyData):
 
-    artwork.showForest()
+    artwork.show_forest()
         
     print('Into the forest you go!')
 
@@ -41,7 +41,7 @@ def ExploreForest(p1, enemyData):
         return
 
     # random things that can help/hurt
-    if IsForestEvent(p1):
+    if is_forest_event(p1):
         return
 
     time.sleep(1)
@@ -51,10 +51,10 @@ def ExploreForest(p1, enemyData):
     print()
 
     # Random luck lottery
-    LuckDragon(p1)
+    luck_dragon(p1)
     
     # Create enemy based on Player's level
-    enemy = Enemy.CreateEnemyByPlayerLevel(p1.Level, enemyData)
+    enemy = Enemy.create_enemy_by_player_level(p1.Level, enemyData)
 
     print(f'A {random.choice(enemyAdjectives)} {enemy.Name} with {enemy.Health} HP and {enemy.Damage} Damage jumps out!')
     print(f'You grip your {p1.Weapon.Name}, with it\'s {p1.Weapon.Damage} Damage.')
@@ -66,10 +66,10 @@ def ExploreForest(p1, enemyData):
     if action == 'Y':
 
         # Call Attack
-        combat.Attack(p1, enemy)
+        combat.attack(p1, enemy)
 
         currentLevel = p1.Level
-        p1.LevelUp()
+        p1.level_up()
         newLevel = p1.Level
 
         if newLevel > currentLevel:
@@ -84,7 +84,7 @@ def ExploreForest(p1, enemyData):
         print('and RUN AWAY to saftey!')
 
 # random forest events
-def IsForestEvent(p1):
+def is_forest_event(p1):
 
     randInt = random.randint(1,100)
 
@@ -148,7 +148,7 @@ def IsForestEvent(p1):
     return False
     # add more
 
-def LuckDragon(p1):
+def luck_dragon(p1):
 
     prize = ['money','health','armor']
     
@@ -171,7 +171,7 @@ def LuckDragon(p1):
         
         print()
 
-def Camp(p1):
+def camp(p1):
 
     # Check to see if it's been at least MAX_TIME_BETWEEN_CAMP_MINUTES
     # since last camp to prevent +HP abuse
@@ -183,7 +183,7 @@ def Camp(p1):
             print(random.choice(noCampingStrings))
             return
 
-    artwork.showCamp()
+    artwork.show_camp()
 
     print('You decide this is a good place to camp for a while.')
     
