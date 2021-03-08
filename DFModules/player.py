@@ -29,7 +29,7 @@ class Player():
 
         self.WeaponData = weaponData
         # Instantiate Weapon into a instance var in Player
-        self.Weapon = self.GetWeapon('Stick')
+        self.Weapon = self.get_weapon('Stick')
 
         # self.LevelUp gets called and resets the values for the money+armor bonus
         # each time. So I need some kind of flag so the bonus is given but not taken.
@@ -176,12 +176,12 @@ class Player():
     # ########################
 
     # After new player is created, set default values
-    def SetDefaultValues(self):
+    def set_default_values(self):
         self.Health = self._maxHealth
         self.Money = 10
 
 
-    def GetWeapon(self, weaponName):
+    def get_weapon(self, weaponName):
         """ Search OrderedDict of Weapons and return a Weapon object if found """
 
         for weapon in self.WeaponData['weapons']:
@@ -189,10 +189,10 @@ class Player():
                 return Weapon(weapon['name'],weapon['damage'],weapon['maxDamage'],weapon['cost'])
 
     
-    def BuyWeapon(self, weaponName):
+    def buy_weapon(self, weaponName):
         """ Assigns the weapon to the Player if Player has enough Money """
 
-        weapon = self.GetWeapon(weaponName)
+        weapon = self.get_weapon(weaponName)
         
         if self.Money >= weapon.Cost:
             self.Weapon = weapon
@@ -201,7 +201,7 @@ class Player():
         
         return False
     
-    def UpgradeWeapon(self, damage):
+    def upgrade_weapon(self, damage):
         """ Upgrade damage on weapon, but no more than maxDamage allowed """
 
         #if damage < self.Weapon['maxDamage']:
@@ -210,7 +210,7 @@ class Player():
 
         return False
 
-    def UpgradeArmor(self, cost, upgradeAmount):
+    def upgrade_armor(self, cost, upgradeAmount):
         """ Upgrade Armor """
         
         if self.Money >= cost:
@@ -222,7 +222,7 @@ class Player():
 
     # TODO: refactor this to a static helper for player and enemy use
     # Armor should take the brunt of the hit first, but health should still be affected
-    def CalculateDamageTaken(self, damage):
+    def calculate_damage_taken(self, damage):
         """ Calculates the damage taken, with and without armor """
 
         if self.Armor == 0:
@@ -246,7 +246,7 @@ class Player():
 
         return healthDamage
 
-    def LevelUp(self):
+    def level_up(self):
         """ Level up the Player """
 
         if self.Xp < 25:
@@ -261,9 +261,9 @@ class Player():
         elif self.Xp >= 250 and self.Xp <= 400:
             self.Level = 3
         
-        self.GiveLevelBonus()
+        self.give_level_bonus()
 
-    def GiveLevelBonus(self):
+    def give_level_bonus(self):
         """ Level Up Bonuses """
 
         if self.Level == 1 and self.Level1BonusReceived == False:
@@ -285,6 +285,6 @@ class Player():
             self.Xp = 100
 
 
-    def IsDead(self):
+    def is_dead(self):
         """ Check to see if the Player is Dead """
         return True if (self.Health <= 0) else False

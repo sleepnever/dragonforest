@@ -12,10 +12,10 @@ from DFModules.player import Player
 
 GAMESAVE_BASEFILE = '_playerSave.ini'
 
-def GetFilesFromDir(directory, extension):
+def get_files_from_dir(directory, extension):
     return (f for f in listdir(directory) if f.endswith('.' + extension))
 
-def LoadDataFromJson(filepath, openMode, isOrderedDict=True):
+def load_data_from_json(filepath, openMode, isOrderedDict=True):
 
     # use a Windows path
     filename = PureWindowsPath(filepath)
@@ -30,14 +30,14 @@ def LoadDataFromJson(filepath, openMode, isOrderedDict=True):
 
     return jsonData
 
-def GetGameSaves():
+def get_game_saves():
     
-    return GetFilesFromDir(os.getcwd(), 'ini')
+    return get_files_from_dir(os.getcwd(), 'ini')
 
 
-def LoadGame(playerSaveFile):
+def load_game(playerSaveFile):
 
-    weaponData = LoadDataFromJson("Data\\weapons.json", "r")
+    weaponData = load_data_from_json("Data\\weapons.json", "r")
     
     config = configparser.ConfigParser()
     config.read(os.path.join(os.getcwd(),playerSaveFile))
@@ -49,7 +49,7 @@ def LoadGame(playerSaveFile):
     p1.Health = int(config['PLAYER']['Health'])
     p1.Armor = int(config['PLAYER']['Armor'])
     p1.Xp = int(config['PLAYER']['Xp'])
-    p1.Weapon = p1.GetWeapon(config['PLAYER']['Weapon'])
+    p1.Weapon = p1.get_weapon(config['PLAYER']['Weapon'])
     p1.Money = int(config['PLAYER']['Money'])
     p1.LastTimeCamped = datetime.datetime.strptime(config['PLAYER']['LastTimeCamped'], "%Y-%m-%d %H:%M:%S.%f") # 2020-10-06 22:37:50.819024
     p1.HasDiscoveredTown = strtobool(config['PLAYER']['HasDiscoveredTown'])
@@ -62,7 +62,7 @@ def LoadGame(playerSaveFile):
 
     return p1
 
-def SaveGame(p1):
+def save_game(p1):
 
     print('< Saving Game >')
     
@@ -96,7 +96,7 @@ def SaveGame(p1):
     with open(os.path.join(os.getcwd(),playerSaveFile),'w') as saveFile:
         config.write(saveFile)
 
-def DeleteSaveGame(playerName):
+def delete_save_game(playerName):
 
     playerSaveFile = playerName + GAMESAVE_BASEFILE
     if os.path.exists(playerSaveFile):

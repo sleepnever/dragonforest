@@ -6,9 +6,9 @@ import time
 # Functions related to combat
 #
 
-def Attack(p1, enemyObj):
+def attack(p1, enemyObj):
 
-    while p1.IsDead() == False and enemyObj.IsDead() == False:
+    while p1.is_dead() == False and enemyObj.is_dead() == False:
         print()
         print(f'You swing your {p1.Weapon.Name} at the {enemyObj.Name}')
 
@@ -21,7 +21,7 @@ def Attack(p1, enemyObj):
         enemyObj.Health = (-1 * p1_damageGiven)
 
         # Check if player or enemy is dead
-        if (enemyObj.IsDead()):
+        if (enemyObj.is_dead()):
             print(f'You hit the {enemyObj.Name} for {p1_damageGiven} damage, and killed it!')
 
             addedXp = random.randint(1, enemyObj.MaxXp)
@@ -34,9 +34,9 @@ def Attack(p1, enemyObj):
             print(f'You hit the {enemyObj.Name} for {p1_damageGiven} damage! It has {enemyObj.Health} HP.')
 
         # Calculate Player's Damage taken from enemy, factoring in armor
-        enemy_damageGiven = p1.CalculateDamageTaken(enemy_damageGiven)
+        enemy_damageGiven = p1.calculate_damage_taken(enemy_damageGiven)
 
-        if (p1.IsDead()):
+        if (p1.is_dead()):
             print(f'{p1.Name} is hit with {enemy_damageGiven} damage and has died! <<GAME OVER>>')
             sys.exit()
         else:

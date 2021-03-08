@@ -13,69 +13,69 @@ from DFModules import dataHelper
 # Functions that are common to all modules
 #
 
-def DoAction(action, playerObj, enemyData):
+def do_action(action, playerObj, enemyData):
 
     if action == 'talk':
         # TODO: do something.. need function/module for NPCs
         pass
         
     elif action == 'exploreForest':
-        forest.ExploreForest(playerObj, enemyData)
+        forest.explore_forest(playerObj, enemyData)
 
     elif action == 'stats':
-        DisplayPlayerStats(playerObj)
+        display_player_stats(playerObj)
 
     elif action == 'camp':
-        forest.Camp(playerObj)
+        forest.camp(playerObj)
 
     elif action == 'town':
-        town.Town(playerObj)
+        town.town(playerObj)
 
     elif action == 'townInn':
-        inn.Inn(playerObj)
+        inn.inn(playerObj)
 
     elif action == 'townTalkToNpc':
-        town.TalkTownNpc()
+        town.talk_town_npc()
 
     elif action == 'townBlacksmith':
-        blacksmith.Blacksmith(playerObj)
+        blacksmith.blacksmith(playerObj)
 
     elif action == 'blacksmithWeapons':
-        blacksmith.BlacksmithWeapons(playerObj)
+        blacksmith.blacksmith_weapons(playerObj)
 
     elif action == 'blacksmithArmorUpgrade':
-        blacksmith.BlacksmithArmorUpgrade(playerObj)
+        blacksmith.blacksmith_armor_upgrade(playerObj)
     
     elif action == 'blacksmithSpecialAction':
-        blacksmith.BlacksmithSpecial(playerObj)
+        blacksmith.blacksmith_special(playerObj)
 
     elif action == 'innGamble':
-        inn.InnGamble(playerObj)
+        inn.inn_gamble(playerObj)
 
     elif action == 'innStay':
         print('You head to your room. Its not much and there is a funny smell, but it will suffice.')
         playerObj.StayedAtInn = True
-        dataHelper.SaveGame(playerObj)
+        dataHelper.save_game(playerObj)
 
         sys.exit()
 
     elif action == 'innDrink':
-        inn.InnDrink(playerObj)
+        inn.inn_drink(playerObj)
 
     elif action == 'innTownNews':
-        inn.InnTownNews(playerObj)
+        inn.inn_town_news(playerObj)
     
     elif action == 'innTalkInnkeeper':
-        inn.TalkInnkeeper(playerObj)
+        inn.talk_inn_keeper(playerObj)
     
     elif action == 'dragoncave':
         dragon.cave(playerObj, enemyData)
 
     elif action == 'help':
-        DisplayHelp()
+        display_help()
 
 
-def DisplayPlayerStats(p1):
+def display_player_stats(p1) -> None:
     
     print()
     print('-=-=-=-=-=-=-=-=-=-STATS=-=-=-=-=-=-=-=-=-=-=-')
@@ -91,7 +91,7 @@ def DisplayPlayerStats(p1):
     print('-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-')
     print()
 
-def DisplayHelp():
+def display_help() -> None:
 
     print('''
     -=-=-= GAME HELP =-=-=-
@@ -127,10 +127,10 @@ def DisplayHelp():
     
     ''')
 
-def LoadSavedGamesMenu():
+def load_saved_games_menu():
 
     # Check for Saves
-    saves = list(dataHelper.GetGameSaves())
+    saves = list(dataHelper.get_game_saves())
 
     if saves == 0:
         return None
@@ -152,4 +152,4 @@ def LoadSavedGamesMenu():
 
     elif int(loadAnswer) > -1 and int(loadAnswer) <= len(saves):
         # returns a Player object
-        return dataHelper.LoadGame(saves[int(loadAnswer)])
+        return dataHelper.load_game(saves[int(loadAnswer)])

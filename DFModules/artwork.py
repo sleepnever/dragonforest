@@ -2,7 +2,7 @@
 # Game ASCII Art
 #
 
-def showTitle():
+def show_title() -> None:
     print('''
 ╔════════════════════╤═════════╗
 ║                              ╟
@@ -11,14 +11,14 @@ def showTitle():
 ╚═════════════╧══════════════╝─╜
     ''')
 
-def showDead():
+def show_dead() -> None:
     print('''
 
     -= YOU ARE DEAD =-
 
     ''')
 
-def showInn():
+def show_inn() -> None:
     print('''
           _________||__
         /             \\
@@ -28,7 +28,7 @@ def showInn():
         |________[ ]__|
     ''')
 
-def showBlacksmith():
+def show_blacksmith() -> None:
         print('''
           ____________
         /             \\
@@ -37,7 +37,7 @@ def showBlacksmith():
         |________[ ]___|
     ''')
 
-def showTown():
+def show_town() -> None:
     print('''
                _________      {**}
               /         \\   {****}
@@ -50,7 +50,7 @@ def showTown():
     ''')
 
 
-def showForest():
+def show_forest() -> None:
     print('''
    {**} {**}    {**}
   {****}****}  {****}
@@ -61,7 +61,7 @@ def showForest():
 
     ''')
 
-def showCamp():
+def show_camp() -> None:
     print('''
         ______         
        /     /\\        `
@@ -70,7 +70,7 @@ def showCamp():
     "     "
     ''')
 
-def showDragonCave():
+def show_dragon_cave() -> None:
     print('''
          ###
        #######
@@ -80,7 +80,7 @@ def showDragonCave():
     -------------------
     ''')
 
-def showDragonAmazement():
+def show_dragon_amazement() -> None:
     print('''
        
        ^^^^^    ^^^^^
@@ -95,7 +95,7 @@ def showDragonAmazement():
        \\___________/
     ''')
 
-def InnGamblePinfinger():
+def inn_gamble_pinfinger() -> None:
     print('''
         [ ]
        _[_]_
@@ -105,14 +105,14 @@ def InnGamblePinfinger():
      (_)(_)(_)O   
     ''')
 
-def InnGambleNumberGuess():
+def inn_gamble_number_guess() -> None:
     print('''
     
     ## Guess the Number ##
     
     ''')
 
-def InnGambleHighPoints():
+def inn_gamble_high_points() -> None:
     print('''
       ________     _______
      /_______/|   /______/|
@@ -123,7 +123,7 @@ def InnGambleHighPoints():
     ''')
 
 
-def InnGambleThimblerigA():
+def inn_gamble_thimblerig_a() -> None:
     print('''
      ____     ____     ____
     /    \\  /    \\  /    \\
@@ -132,7 +132,7 @@ def InnGambleThimblerigA():
       ( )
     ''')
 
-def InnGambleThimblerigB():
+def inn_gamble_thimblerig_b() -> None:
     print('''
      ____     ____     ____
     /    \\  /    \\  /    \\
@@ -141,7 +141,7 @@ def InnGambleThimblerigB():
               ( )
     ''')
 
-def InnGambleThimblerigC():
+def inn_gamble_thimblerig_c() -> None:
     print('''
      ____     ____     ____
     /    \\  /    \\  /    \\
@@ -150,7 +150,7 @@ def InnGambleThimblerigC():
                         ( )
     ''')
 
-def InnGambleThimblerigEnd():
+def inn_gamble_thimblerig_end() -> None:
     print('''
      ____     ____     ____
     /    \\  /    \\  /    \\

@@ -7,7 +7,7 @@ from DFModules import dataHelper
 
 def cave(p1,enemyData):
     
-    artwork.showDragonCave()
+    artwork.show_dragon_cave()
 
     print('''
     There is no sound, except the crackle of a few burning trees. The landscape in front of the cave
@@ -19,11 +19,11 @@ def cave(p1,enemyData):
     caveAnswer = input("Enter the Cave (Y/N): ").upper()
 
     if caveAnswer == 'Y':
-        dragonCave(p1, enemyData)
+        dragon_cave(p1, enemyData)
     else:
         print('No, today isn\'t the day for this. You sneak away.')
 
-def dragonCave(p1, enemyData):
+def dragon_cave(p1, enemyData):
     
     print('''
     You stand on the corner, and peak your head around into the dark cave. Deep inside, you can hear
@@ -76,21 +76,21 @@ def dragonCave(p1, enemyData):
     answer = input('Command: ').upper()
 
     if answer == 'A':
-        AttackDragon(p1, enemyData)
+        attack_dragon(p1, enemyData)
     elif answer == 'T':
-        TalkToDragon(p1)
+        talk_to_dragon(p1)
     elif answer == 'L':
         # TODO: 50/50 chance of getting away, otherwise die
         return
 
-def AttackDragon(p1, enemyData):
+def attack_dragon(p1, enemyData):
 
     print(f'You raise your {p1.Weapon.Name}, scream like a mad man and run straight for it!!')
     
-    dragonObj = Enemy.CreateEnemyByName('Dragon', enemyData)
+    dragonObj = Enemy.create_enemy_by_name('Dragon', enemyData)
     combat.Attack(p1, dragonObj)
 
-def TalkToDragon(p1):
+def talk_to_dragon(p1):
     
     print(f'The dragon\'s eyes shift and watch you closely. You lay your {p1.Weapon.Name} down to the side and back away.')
     print('''
@@ -109,10 +109,10 @@ def TalkToDragon(p1):
     the cows, and the bread, and that's wh...wait. The last ingredient. A human. That's... me!!!
     ''')
 
-    artwork.showDragonAmazement()
+    artwork.show_dragon_amazement()
 
     p1.HadDragonDiscussion = True
-    dataHelper.SaveGame(p1)
+    dataHelper.save_game(p1)
 
     sys.exit()
 

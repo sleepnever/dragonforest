@@ -11,27 +11,27 @@ from DFModules import artwork
 # Pinfinger: knife game with fingers
 # Guess a number
 
-def SelectGame(p1, game, wager, npcWager):
+def select_game(p1, game, wager, npcWager):
 
     if game.lower() == "thimblerig":
-        Thimblerig(p1, wager, npcWager)
+        thimblerig(p1, wager, npcWager)
 
     if game.lower() == "pinfinger":
-        Pinfinger(p1, wager, npcWager)
+        pinfinger(p1, wager, npcWager)
     
     if game.lower() == "guess the number":
-        GuessTheNumber(p1, wager, npcWager)
+        guess_the_number(p1, wager, npcWager)
 
-def Thimblerig(p1, wager, npcWager):
+def thimblerig(p1, wager, npcWager):
 
-    artwork.InnGambleThimblerigB()
+    artwork.inn_gamble_thimblerig_b()
 
     print(f'You have to be fast for this game. Keep your eye on the cup with the ball.')
 
-    randomCupFuncList = [artwork.InnGambleThimblerigA, artwork.InnGambleThimblerigB, artwork.InnGambleThimblerigC]
+    randomCupFuncList = [artwork.inn_gamble_thimblerig_a, artwork.inn_gamble_thimblerig_b, artwork.inn_gamble_thimblerig_c]
     randCup = random.choice(randomCupFuncList)
 
-    artwork.InnGambleThimblerigEnd()
+    artwork.inn_gamble_thimblerig_end()
 
     guess = input("Which cup? A, B or C: ")
 
@@ -47,12 +47,12 @@ def Thimblerig(p1, wager, npcWager):
     else:
         print('You Lose!')
 
-def Passedix(p1, wager, npcWager):
+def passedix(p1, wager, npcWager):
     pass
 
-def Pinfinger(p1, wager, npcWager):
+def pinfinger(p1, wager, npcWager):
 
-    artwork.InnGamblePinfinger()
+    artwork.inn_gamble_pinfinger()
 
     print('''
     \n
@@ -96,7 +96,7 @@ def Pinfinger(p1, wager, npcWager):
         print(f'The group looks at you in amazement. You give a wide smile, grab your winnings of {wager} coin and head out.')
     
 
-def GuessTheNumber(p1, wager, npcWager):
+def guess_the_number(p1, wager, npcWager):
     
     num = random.randint(1,50)
     theNum = random.randint(2,49)

@@ -10,9 +10,9 @@ from DFModules import common
 # Functions
 #
 
-def Town(p1):
+def town(p1):
 
-    artwork.showTown()
+    artwork.show_town()
 
     print('''
     Climbing over the rocks and pushing the branches out of the way, you see the town.
@@ -39,18 +39,18 @@ def Town(p1):
         action = input('Command: ').upper()
         
         if action == 'I':
-            common.DoAction('townInn', p1, None)
+            common.do_action('townInn', p1, None)
 
         elif action == 'B':
-            common.DoAction('townBlacksmith', p1, None)
+            common.do_action('townBlacksmith', p1, None)
 
         elif action == 'T':
-            common.DoAction('townTalkToNpc', p1, None)
+            common.do_action('townTalkToNpc', p1, None)
 
         elif action == 'L':
             return  # should go back to the main game loop with main menu
 
-def TalkTownNpc():
+def talk_town_npc():
 
     npcTopics = ['Dragon Forest','Town History','Forest Secrets','Blacksmith','Inn']
     topic = random.choice(npcTopics)

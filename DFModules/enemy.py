@@ -67,7 +67,7 @@ class Enemy():
     # METHODS
     # ########################
     @staticmethod
-    def CreateEnemyByName(enemyName, enemyData):
+    def create_enemy_by_name(enemyName, enemyData):
 
         # search through the JSON data to find Enemies that are <= level of the Player
         for enemy in enemyData['enemies']:
@@ -80,7 +80,7 @@ class Enemy():
     #      yet, so self doesn't apply. The method gets a random enemy from the JSON data and returns
     #      an Enemy object with the attributes to the caller
     @staticmethod
-    def CreateEnemyByPlayerLevel(playerLevel, enemyData):
+    def create_enemy_by_player_level(playerLevel, enemyData):
 
         playerLevelEnemyList = []
 
@@ -95,5 +95,5 @@ class Enemy():
         return Enemy(randomEnemyObj)
 
 
-    def IsDead(self):
+    def is_dead(self):
         return True if (self._health <= 0) else False

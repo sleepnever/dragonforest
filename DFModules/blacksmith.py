@@ -10,9 +10,9 @@ from DFModules import common
 # Functions for Blacksmith
 #
 
-def Blacksmith(p1):
+def blacksmith(p1):
 
-    artwork.showBlacksmith()
+    artwork.show_blacksmith()
 
     print('The Blacksmith sees you approaching, as he hammers on a shiny blade. He starts to grin.')
     time.sleep(1)
@@ -43,18 +43,18 @@ def Blacksmith(p1):
         action = input('Command: ').upper()
         
         if action == 'W':
-            common.DoAction('blacksmithWeapons', p1, None)
+            common.do_action('blacksmithWeapons', p1, None)
 
         elif action == 'A':
-            common.DoAction('blacksmithArmorUpgrade', p1, None)
+            common.do_action('blacksmithArmorUpgrade', p1, None)
 
         elif action == "GUINEVERE":
-            common.DoAction('blacksmithSpecialAction', p1, None)
+            common.do_action('blacksmithSpecialAction', p1, None)
 
         elif action == 'L':
             return
 
-def BlacksmithWeapons(p1):
+def blacksmith_weapons(p1):
 
     print(f'"Welcome to my Armory wall. This is what I have for purchase. Coin only."')
     print(f'You have {p1.Money} coin.')
@@ -86,12 +86,12 @@ def BlacksmithWeapons(p1):
         weaponName = weaponDict.get(int(command))
 
         # player can purchase
-        if p1.BuyWeapon(weaponName):
+        if p1.buy_weapon(weaponName):
             print(f'You purchased a {weaponName}')
         else:
             print('You do not have enough money.')
 
-def BlacksmithArmorUpgrade(p1):
+def blacksmith_armor_upgrade(p1):
 
     print('''   
              __________
@@ -116,7 +116,7 @@ def BlacksmithArmorUpgrade(p1):
         action = input('\nDo you want to upgrade? Y/N: ').upper()    
 
         if action == 'Y':
-            if p1.UpgradeArmor(upgradeCost, upgradeAmount):
+            if p1.upgrade_armor(upgradeCost, upgradeAmount):
                 print('\n"Enjoy your armor and your lighter pocket!", laughs the Blacksmith.')
             else:
                 print('"Come back when you have more money...", groans the Blacksmith.')
@@ -135,7 +135,7 @@ def BlacksmithArmorUpgrade(p1):
     else:
         print('Your Armor is already at Max.')
 
-def BlacksmithSpecial(p1):
+def blacksmith_special(p1):
     
     if p1.BlacksmithSpecialReceived == False:
         print('''
