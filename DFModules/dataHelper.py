@@ -15,7 +15,7 @@ GAMESAVE_BASEFILE = '_playerSave.ini'
 # Replacement function
 def strtobool(value: str) -> bool:
     value = value.lower()
-    if balue in ("y", "yes", "on", "1", "true", "t"):
+    if value in ("y", "yes", "on", "1", "true", "t"):
         return True
     return False
 
