@@ -6,11 +6,18 @@ import json
 import datetime
 from collections import OrderedDict
 from pathlib import Path, PureWindowsPath
-from distutils.util import strtobool
 
 from DFModules.player import Player
 
 GAMESAVE_BASEFILE = '_playerSave.ini'
+
+# distutils.util depreciated in 3.12
+# Replacement function
+def strtobool(value: str) -> bool:
+    value = value.lower()
+    if balue in ("y", "yes", "on", "1", "true", "t"):
+        return True
+    return False
 
 def get_files_from_dir(directory, extension):
     return (f for f in listdir(directory) if f.endswith('.' + extension))
