@@ -1,6 +1,6 @@
 # Dragon Forest
 ## by Rob Watts
-#### Python 3.7
+#### Python 3.12
 
 Text based adventure game that brings me back to my childhood of running a BBS and dialing into many and playing these types of games, specifically L.O.R.D (which I still have my paid copy on a 3.5" floppy)
 
@@ -8,7 +8,7 @@ I'm doing this as a project to learn Python. All ASCII art and code is by me - o
 
 ### How to Play
 1. Clone project locally
-2. Make sure you're running at least Python 3.7
+2. Make sure you're running at least Python 3.12
 3. Run 'python DragonForest.py' from the Python cmdline
 4. Follow prompts, explore or use in-game Help
 
